@@ -3,6 +3,14 @@
 
 static Cmd* tree;
 
+void cmdie_build() {
+  
+}
+
+void cmdie_parse(int argc, char **argv) {
+  
+}
+
 Cmd* cmdie_make_cmd() {
   Cmd* result = (Cmd*)malloc(sizeof(Cmd));
   result->parent = NULL;
