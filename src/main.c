@@ -1,6 +1,8 @@
 #include <stdio.h>
 
+#include "clabs.h"
+
 int main(int argc, char **argv) {
-    printf("%s\n", "Hello world!!");
+    trace("This is a trace msg!\n");
     return 0;
 }
