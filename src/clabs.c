@@ -7,8 +7,9 @@ void trace(const char* msg) {
 void eval_binary(int argc, char **argv, unsigned char* raw, int raw_size){
     JSRuntime *rt = JS_NewRuntime();
     JSContext *ctx = JS_NewContextRaw(rt);
-    
+
     JS_AddIntrinsicBaseObjects(ctx);
+
     js_std_add_helpers(ctx, argc, argv);
     js_std_eval_binary(ctx, raw, raw_size, 0);
     js_std_loop(ctx);
