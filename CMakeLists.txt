@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
+project(CLabs)
+
 find_library(
     LIB_QUICKJS
     quickjs
