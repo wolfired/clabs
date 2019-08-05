@@ -7,9 +7,11 @@ if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
     exit 0
 fi
 
+root=`pwd`
+
 if [ -n "$clean" ]; then rm -rf out; fi \
 && mkdir -p out \
 && cd out \
 && cmake -DCMAKE_BUILD_TYPE=Debug .. \
 && make \
-&& if [ -n "$run" ]; then ./main; fi
+&& if [ -n "$run" ]; then $root/bin/$run; fi
