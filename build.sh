@@ -2,8 +2,8 @@ if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
     echo "Usage:"
     echo "  clean=1 ./build.sh"
     echo "      Clean"
-    echo "  run=1 ./build.sh"
-    echo "      Run"
+    echo "  run=? ./build.sh"
+    echo "      Run ? = test_trace | test_file | test_qjs"
     exit 0
 fi
 
