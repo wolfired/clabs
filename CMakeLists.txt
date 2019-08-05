@@ -15,6 +15,8 @@ add_library(
     STATIC
     src/clabs.h
     src/clabs.c
+    src/file.h
+    src/file.c
 )
 
 target_include_directories(
