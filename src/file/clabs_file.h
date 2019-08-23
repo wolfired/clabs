@@ -1,5 +1,5 @@
-#ifndef FILE_H
-#define FILE_H
+#ifndef CLABS_FILE_H
+#define CLABS_FILE_H
 
 #include <stdio.h>
 #include <stdlib.h>

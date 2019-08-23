@@ -1,4 +1,4 @@
-#include "file/file.h"
+#include "file/clabs_file.h"
 
 int main(int argc, char** argv) {
     clabsFile file;

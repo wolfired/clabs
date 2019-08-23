@@ -1,4 +1,4 @@
-#include "qjs.h"
+#include "clabs_qjs.h"
 
 void eval_binary(int argc, char **argv, unsigned char* raw, int raw_size){
     JSRuntime *rt = JS_NewRuntime();

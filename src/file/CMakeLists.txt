@@ -1,8 +1,8 @@
 add_library(
     clabs_file
     STATIC
-    file.h
-    file.c
+    clabs_file.h
+    clabs_file.c
 )
 
 #

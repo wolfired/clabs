@@ -1,5 +1,5 @@
-#ifndef QJS_H
-#define QJS_H
+#ifndef CLABS_QJS_H
+#define CLABS_QJS_H
 
 #include <quickjs-libc.h>
 

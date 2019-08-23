@@ -1,4 +1,4 @@
-#include "file.h"
+#include "clabs_file.h"
 
 clabsFile* clabsFileNew() {
     clabsFile* file = malloc(sizeof(clabsFile));

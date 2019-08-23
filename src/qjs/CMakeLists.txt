@@ -12,8 +12,8 @@ include_directories(
 add_library(
     clabs_qjs
     STATIC
-    qjs.h
-    qjs.c
+    clabs_qjs.h
+    clabs_qjs.c
 )
 
 #
