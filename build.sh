@@ -27,7 +27,6 @@ if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
 fi
 
 CWD=`pwd`
-# trap "{ export EXT=$?; cd $CWD && exit $EXT; }" exit
 
 CLABS_CLEAN=${clean:-"false"}
 CLABS_RUN=${run:-""}
