@@ -1,19 +1,12 @@
 # clabs
 
-编译Quickjs
-
 ```bash
-SOURCE_TAR_NAME=quickjs-2019-07-09
-cd ~/workspace_labs
-wget https://bellard.org/quickjs/${SOURCE_TAR_NAME}.tar.xz
-tar -xf ${SOURCE_TAR_NAME}.tar.xz
+# Help
+./build.sh -h
 
-cd ${SOURCE_TAR_NAME}
-make
-```
+# Compile
+./build.sh
 
-编译CLabs
-
-```bash
-rm -rf out && mkdir out && cd out && cmake .. && make && cd ..
+# Test qjs
+run=test_qjs ./build.sh
 ```

@@ -1,11 +1,11 @@
 find_library(
     LIB_QUICKJS
     quickjs
-    /home/link/workspace_labs/quickjs-2019-07-09
+    ${QJS_PATH}
 )
 
 include_directories(
-    /home/link/workspace_labs/quickjs-2019-07-09
+    ${QJS_PATH}
 )
 
 #
