@@ -13,3 +13,4 @@ include_directories(
 add_subdirectory(src)
 add_subdirectory(src/file)
 add_subdirectory(src/qjs)
+add_subdirectory(src/x264)
