@@ -19,7 +19,7 @@ void eval_source(int argc, char **argv, unsigned char* raw, int raw_size){
 
     js_std_add_helpers(ctx, argc, argv);
 
-    JSValue val = JS_Eval(ctx, raw, raw_size, "buffer", JS_EVAL_TYPE_GLOBAL | JS_EVAL_FLAG_SHEBANG);
+    JSValue val = JS_Eval(ctx, raw, raw_size, "buffer", JS_EVAL_TYPE_GLOBAL | JS_EVAL_FLAG_STRICT);
     if (JS_IsException(val)) {
         js_std_dump_error(ctx);
     }
