@@ -11,6 +11,11 @@ include_directories(
 )
 
 add_subdirectory(src)
-add_subdirectory(src/file)
-add_subdirectory(src/qjs)
-add_subdirectory(src/x264)
+
+if(${ENABLE_WASM} STREQUAL "true")
+    add_subdirectory(src/wasm)
+else()
+    add_subdirectory(src/file)
+    add_subdirectory(src/qjs)
+    add_subdirectory(src/x264)
+endif()

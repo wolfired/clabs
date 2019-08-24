@@ -7,11 +7,11 @@ add_library(
 
 #
 add_executable(
-    test_trace
-    test_trace.c
+    test_clabs
+    test_clabs.c
 )
 
 target_link_libraries(
-    test_trace
+    test_clabs
     clabs
 )
