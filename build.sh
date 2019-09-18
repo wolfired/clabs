@@ -45,6 +45,7 @@ if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
     echo "      ? default is \"libavcodec/libavcodec.a\""
     echo "  ffmpeg_enable_wasm=?"
     echo "      ? = true | false, skip is false"
+    #
     exit 0
 fi
 
