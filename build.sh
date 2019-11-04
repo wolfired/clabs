@@ -80,7 +80,7 @@ function build_qjs() {
         sed -i "s/quickjs-[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}/$QJS_VERSION/g" $qjs_go
     fi
     
-    cd `find . -maxdepth 1 -type d -name quickjs-\*`
+    cd "$QJS_PATH"
     sed -i 's/CONFIG_M32=y/CONFIG_M32=/g' Makefile
     make $QJS_MAKE_TARGET
 }
