@@ -13,7 +13,7 @@ if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
     echo "      ? = true | false, skip is false"
     echo "  run=?"
     echo "      Build an Run"
-    echo "      ? = test_trace | test_file | test_qjs"
+    echo "      ? = test_clabs | test_file | test_qjs"
     echo "  type=?"
     echo "      ? = Debug | Release, skip is Debug"
     #
