@@ -57,8 +57,8 @@ CLABS_CLEAN=${clean:-"false"}
 CLABS_RUN=${run:-""}
 CLABS_BUILD_TYPE=${type:-"Debug"}
 
-WORKSPACE_GIT=${workspace_git:-"~/workspace_git"}
-WORKSPACE_LABS=${workspace_labs:-"~/workspace_labs"}
+WORKSPACE_GIT=${workspace_git:-~/workspace_git}
+WORKSPACE_LABS=${workspace_labs:-~/workspace_labs}
 
 GOLABS_PATH=$WORKSPACE_GIT/golabs
 
@@ -70,7 +70,9 @@ QJS_PATH=$WORKSPACE_LABS/$QJS_VERSION
 function build_qjs() {
     cd $WORKSPACE_LABS
     if [ ! -d "$QJS_PATH" ]; then
-        wget https://bellard.org/quickjs/$QJS_VERSION.tar.xz
+        if [ ! -f "$WORKSPACE_LABS/$QJS_VERSION.tar.xz"]; then
+            wget https://bellard.org/quickjs/$QJS_VERSION.tar.xz
+        fi
         tar -xJvf $QJS_VERSION.tar.xz
         QJS_RECONFIG=true
     fi
