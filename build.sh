@@ -57,8 +57,8 @@ CLABS_CLEAN=${clean:-"false"}
 CLABS_RUN=${run:-""}
 CLABS_BUILD_TYPE=${type:-"Debug"}
 
-WORKSPACE_GIT=~/workspace_git
-WORKSPACE_LABS=~/workspace_labs
+WORKSPACE_GIT=${workspace_git:-"~/workspace_git"}
+WORKSPACE_LABS=${workspace_labs:-"~/workspace_labs"}
 
 GOLABS_PATH=$WORKSPACE_GIT/golabs
 
