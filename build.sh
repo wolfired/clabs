@@ -70,7 +70,7 @@ QJS_PATH=$WORKSPACE_LABS/$QJS_VERSION
 function build_qjs() {
     cd $WORKSPACE_LABS
     if [ ! -d "$QJS_PATH" ]; then
-        if [ ! -f "$WORKSPACE_LABS/$QJS_VERSION.tar.xz"]; then
+        if [ ! -f "$WORKSPACE_LABS/$QJS_VERSION.tar.xz" ]; then
             wget https://bellard.org/quickjs/$QJS_VERSION.tar.xz
         fi
         tar -xJvf $QJS_VERSION.tar.xz
