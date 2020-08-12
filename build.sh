@@ -17,6 +17,9 @@ if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
     echo "  type=?"
     echo "      ? = Debug | Release, skip is Debug"
     #
+    echo "  qjs_need=?"
+    echo "      Need or Not"
+    echo "      ? = true | false, skip is false"
     echo "  qjs_version=?"
     echo "      ? default is \"quickjs-2019-08-18\""
     echo "  qjs_reconfig=?"
@@ -24,6 +27,9 @@ if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
     echo "  qjs_make_target=?"
     echo "      ? default is \"libquickjs.a\""
     #
+    echo "  x264_need=?"
+    echo "      Need or Not"
+    echo "      ? = true | false, skip is false"
     echo "  x264_git_url=?"
     echo "      ? default is \"https://code.videolan.org/videolan/x264.git\""
     echo "  x264_config=?"
@@ -33,6 +39,9 @@ if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
     echo "  x264_make_target=?"
     echo "      ? default is \"libx264.a cli\""
     #
+    echo "  ffmpeg_need=?"
+    echo "      Need or Not"
+    echo "      ? = true | false, skip is false"
     echo "  ffmpeg_git_url=?"
     echo "      ? default is \"https://github.com/FFmpeg/FFmpeg.git\""
     echo "  ffmpeg_config=?"
@@ -63,6 +72,7 @@ WORKSPACE_LABS=${workspace_labs:-~/workspace_labs}
 GOLABS_PATH=$WORKSPACE_GIT/golabs
 
 # Build quickjs
+QJS_NEED=${qjs_need:-"false"}
 QJS_VERSION=${qjs_version:-"quickjs-2019-08-18"}
 QJS_RECONFIG=${qjs_reconfig:-"false"}
 QJS_MAKE_TARGET=${qjs_make_target:-"libquickjs.a"}
@@ -86,9 +96,15 @@ function build_qjs() {
     sed -i 's/CONFIG_M32=y/CONFIG_M32=/g' Makefile
     make $QJS_MAKE_TARGET
 }
-build_qjs
+if [ "test_qjs" = "$CLABS_RUN" ]; then
+    QJS_NEED=true
+fi
+if [ "true" = "$QJS_NEED" ]; then
+    build_qjs
+fi
 
 # Build x264
+X264_NEED=${x264_need:-"false"}
 X264_GIT_URL=${x264_git_url:-"https://code.videolan.org/videolan/x264.git"}
 X264_CONFIG=${x264_config:-"--disable-asm"}
 X264_RECONFIG=${x264_reconfig:-"false"}
@@ -104,9 +120,12 @@ function build_x264() {
     if [ "true" = "$X264_RECONFIG" ]; then ./configure $X264_CONFIG; fi
     make $X264_MAKE_TARGET
 }
-build_x264
+if [ "true" = "$X264_NEED" ]; then
+    build_x264
+fi
 
 # Build ffmpeg
+FFMPEG_NEED=${ffmpeg_need:-"false"}
 FFMPEG_GIT_URL=${ffmpeg_git_url:-"https://github.com/FFmpeg/FFmpeg.git"}
 FFMPEG_ENABLE_WASM=${ffmpeg_enable_wasm:-"false"}
 FFMPEG_CONFIG=${ffmpeg_config:-"--disable-all --disable-doc --disable-asm --disable-autodetect --disable-pthreads --disable-everything --disable-iconv --enable-avcodec --enable-decoder=h264"}
@@ -127,7 +146,9 @@ function build_ffmpeg() {
     if [ "true" = "$FFMPEG_RECONFIG" ]; then $wasm_configure ./configure $FFMPEG_CONFIG; fi
     $wasm_make make $FFMPEG_MAKE_TARGET
 }
-# build_ffmpeg
+if [ "true" = "$FFMPEG_NEED" ]; then
+    build_ffmpeg
+fi
 
 # Build clabs
 function build_clabs() {
@@ -139,7 +160,9 @@ function build_clabs() {
     wams_make=
     Denable_wasm="-DENABLE_WASM=false"
     Denable_wasm_html=
+    Dqjs_need="-DQJS_NEED=$QJS_NEED"
     Dqjs_path="-DQJS_PATH=$QJS_PATH"
+    Dx264_need="-DX264_NEED=$X264_NEED"
     Dx264_path="-DX264_PATH=$X264_PATH"
     if [ "true" = "$CLABS_ENABLE_WASM" ]; then
         wasm_cmake=emcmake
@@ -149,7 +172,7 @@ function build_clabs() {
         Dqjs_path=
         Dx264_path=
     fi
-    $wasm_cmake cmake $Denable_wasm $Denable_wasm_html $Dqjs_path $Dx264_path -DCMAKE_BUILD_TYPE=$CLABS_BUILD_TYPE ..
+    $wasm_cmake cmake $Denable_wasm $Denable_wasm_html $Dqjs_need $Dqjs_path $Dx264_need $Dx264_path -DCMAKE_BUILD_TYPE=$CLABS_BUILD_TYPE ..
     $wasm_make make
     if [ -n "$CLABS_RUN" ]; then $CWD/bin/$CLABS_RUN; fi
 }
