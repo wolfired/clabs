@@ -20,7 +20,7 @@ if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
     echo "  qjs_version=?"
     echo "      ? default is \"quickjs-2019-08-18\""
     echo "  qjs_reconfig=?"
-    echo "      ? = true | false, skip is false"
+    echo "      ? = true | false, skip is false, see 'https://github.com/wolfired/golabs/blob/develop/go2clabs/qjs.go'"
     echo "  qjs_make_target=?"
     echo "      ? default is \"libquickjs.a\""
     #
