@@ -1,27 +1,10 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 
-project(CLabs)
+project(clabs VERSION 0.0.1)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-
-include_directories(
-    ./src
-)
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
 
 add_subdirectory(src)
-
-if(${ENABLE_WASM} STREQUAL "true")
-    add_subdirectory(src/wasm)
-else()
-    add_subdirectory(src/file)
-
-    if(${QJS_NEED} STREQUAL "true")
-        add_subdirectory(src/qjs)
-    endif()
-
-    if(${X264_NEED} STREQUAL "true")
-        add_subdirectory(src/x264)
-    endif()
-endif()
