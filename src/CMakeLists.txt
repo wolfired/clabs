@@ -4,10 +4,12 @@ set(
     CONTAINER_INC
     container/list.h
     container/list_singly_linked.h
+    container/list_doubly_linked.h
 )
 set(
     CONTAINER_SRC
     container/list_singly_linked.c
+    container/list_doubly_linked.c
 )
 
 add_library(clabs_static STATIC ${CONTAINER_SRC})

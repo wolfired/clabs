@@ -26,16 +26,20 @@
 
 static int setup(void** state) {
     List* plist = (List*)malloc(sizeof(List));
+
     *plist = NULL;
+
     list_create(plist);
     assert_non_null(*plist);
+
     *state = plist;
+
     return 0;
 }
 
 static int teardown(void** state) {
     List* plist = (List*)*state;
-    list_destory(plist);
+    list_delete(plist);
     assert_null(*plist);
     free(plist);
     return 0;
@@ -50,80 +54,188 @@ static void test_list_insert_count_count_set(void** state) {
     List list = (List) * (List*)*state;
     assert_int_equal(0, list_count(list));
 
-    list_count_set(list, 0);
-    assert_int_equal(0, list_count(list));
     list_insert(list, list_count(list) + 1, NULL);
     list_insert(list, -list_count(list) - 1 - 1, NULL);
-    list_insert(list, 1, NULL);
-    list_insert(list, -2, NULL);
-    list_insert(list, 0, NULL);
-    list_insert(list, 1, NULL);
-    list_insert(list, -1, NULL);
+    assert_int_equal(0, list_count(list));
+
     list_insert(list, list_count(list), NULL);
     list_insert(list, -list_count(list) - 1, NULL);
-    assert_int_equal(5, list_count(list));
+    assert_int_equal(2, list_count(list));
 
-    list_count_set(list, 0);
-    assert_int_equal(0, list_count(list));
-    list_insert(list, -1, NULL);
-    list_insert(list, 1, NULL);
+    list_insert(list, list_count(list) + 1, NULL);
+    list_insert(list, -list_count(list) - 1 - 1, NULL);
     assert_int_equal(2, list_count(list));
 }
 
-static void test_list_insert_valueat(void** state) {
+static void test_list_valueat(void** state) {
     List list = (List) * (List*)*state;
     assert_int_equal(0, list_count(list));
 
-    char* str = "0123456789";
+    assert_null(list_valueat(list, list_count(list) - 1));
+    assert_null(list_valueat(list, -list_count(list)));
 
-    list_insert(list, 0, str + 9);
-    list_insert(list, -1, str + 7);
-    list_insert(list, 0, str + 3);
-    list_insert(list, 0, str + 0);
+    char* str = "0123";
+
+    list_insert(list, list_count(list), str + 2);
+    list_insert(list, -list_count(list) - 1, str + 1);
+    list_insert(list, list_count(list), str + 3);
+    list_insert(list, -list_count(list) - 1, str + 0);
     assert_int_equal(4, list_count(list));
-    list_insert(list, 4 + 1, str + 1);
-    list_insert(list, -4 - 1, str + 2);
-    assert_int_equal(5, list_count(list));
-    list_insert(list, -5 - 1 - 1, str + 8);
-    list_insert(list, 1, str + 6);
-    list_insert(list, -1, str + 5);
-    assert_int_equal(7, list_count(list));
-    assert_int_equal((char)'2', *(char*)list_valueat(list, 0));
-    assert_int_equal((char)'6', *(char*)list_valueat(list, 1));
-    assert_int_equal((char)'0', *(char*)list_valueat(list, 2));
-    assert_int_equal((char)'3', *(char*)list_valueat(list, 3));
-    assert_int_equal((char)'9', *(char*)list_valueat(list, 4));
-    assert_int_equal((char)'7', *(char*)list_valueat(list, 5));
-    assert_int_equal((char)'5', *(char*)list_valueat(list, 6));
+
+    assert_null(list_valueat(list, list_count(list)));
+    assert_null(list_valueat(list, -list_count(list) - 1));
+
+    assert_int_equal((char)'3', *(char*)list_valueat(list, list_count(list) - 1));
+    assert_int_equal((char)'0', *(char*)list_valueat(list, -list_count(list)));
 }
 
-static void test_list_insert_indexof(void** state) {
+static void test_list_indexof(void** state) {
     List list = (List) * (List*)*state;
     assert_int_equal(0, list_count(list));
 
-    char* str = "0123456789";
+    char* str = "0123";
 
-    list_insert(list, list_count(list), str + 9);
-    list_insert(list, list_count(list), str + 0);
-    list_insert(list, -1, str + 2);
-    list_insert(list, -1, str + 5);
-    list_insert(list, -list_count(list)-1, str + 6);
-    list_insert(list, -list_count(list)-1, str + 8);
-    list_insert(list, 0, str + 3);
-    list_insert(list, 0, str + 7);
-    list_insert(list, 5, str + 1);
-    list_insert(list, -3, str + 4);
-    assert_int_equal(10, list_count(list));
-    assert_int_equal(0, list_indexof(list, str + 7));
-    assert_int_equal(1, list_indexof(list, str + 3));
-    assert_int_equal(2, list_indexof(list, str + 8));
-    assert_int_equal(3, list_indexof(list, str + 6));
-    assert_int_equal(4, list_indexof(list, str + 9));
-    assert_int_equal(5, list_indexof(list, str + 1));
-    assert_int_equal(6, list_indexof(list, str + 0));
-    assert_int_equal(7, list_indexof(list, str + 4));
-    assert_int_equal(8, list_indexof(list, str + 2));
-    assert_int_equal(9, list_indexof(list, str + 5));
+    list_insert(list, list_count(list), str + 2);
+    list_insert(list, -list_count(list) - 1, str + 1);
+    list_insert(list, list_count(list), str + 3);
+    list_insert(list, -list_count(list) - 1, str + 0);
+    assert_int_equal(4, list_count(list));
+
+    assert_int_equal(0, list_indexof(list, str + 0));
+    assert_int_equal(1, list_indexof(list, str + 1));
+    assert_int_equal(2, list_indexof(list, str + 2));
+    assert_int_equal(3, list_indexof(list, str + 3));
+}
+
+static void test_list_remove(void** state) {
+    List list = (List) * (List*)*state;
+    assert_int_equal(0, list_count(list));
+
+    Value value = NULL;
+
+    assert_int_equal(0, list_remove(list, list_count(list) - 1, &value));
+    assert_null(value);
+    assert_int_equal(0, list_remove(list, -list_count(list), &value));
+    assert_null(value);
+
+    char* str = "0123";
+
+    list_insert(list, list_count(list), str + 2);
+    list_insert(list, -list_count(list) - 1, str + 1);
+    list_insert(list, list_count(list), str + 3);
+    list_insert(list, -list_count(list) - 1, str + 0);
+    assert_int_equal(4, list_count(list));
+
+    assert_int_equal(4, list_remove(list, list_count(list), &value));
+    assert_null(value);
+    assert_int_equal(4, list_remove(list, -list_count(list) - 1, &value));
+    assert_null(value);
+
+    assert_int_equal(3, list_remove(list, list_count(list) - 1, &value));
+    assert_non_null(value);
+    assert_int_equal((char)'3', *(char*)value);
+
+    assert_int_equal(2, list_remove(list, -list_count(list), &value));
+    assert_non_null(value);
+    assert_int_equal((char)'0', *(char*)value);
+
+    assert_int_equal(1, list_remove(list, list_count(list) - 1, &value));
+    assert_non_null(value);
+    assert_int_equal((char)'2', *(char*)value);
+
+    assert_int_equal(0, list_remove(list, -list_count(list), &value));
+    assert_non_null(value);
+    assert_int_equal((char)'1', *(char*)value);
+
+    assert_int_equal(0, list_count(list));
+}
+
+static void test_list_update(void** state) {
+    List list = (List) * (List*)*state;
+    assert_int_equal(0, list_count(list));
+
+    assert_ptr_equal(NULL, list_update(list, list_count(list) - 1, NULL));
+    assert_ptr_equal(NULL, list_update(list, -list_count(list), NULL));
+
+    char* str = "01234567";
+
+    list_insert(list, list_count(list), str + 2);
+    list_insert(list, -list_count(list) - 1, str + 1);
+    list_insert(list, list_count(list), str + 3);
+    list_insert(list, -list_count(list) - 1, str + 0);
+    assert_int_equal(4, list_count(list));
+
+    assert_ptr_equal(NULL, list_update(list, list_count(list), NULL));
+    assert_ptr_equal(NULL, list_update(list, -list_count(list) - 1, NULL));
+
+    assert_int_equal((char)'3', *(char*)list_update(list, list_count(list) - 1, str + 7));
+    assert_int_equal((char)'0', *(char*)list_update(list, -list_count(list), str + 4));
+
+    assert_int_equal((char)'7', *(char*)list_valueat(list, list_count(list) - 1));
+    assert_int_equal((char)'4', *(char*)list_valueat(list, -list_count(list)));
+    assert_int_equal(4, list_count(list));
+}
+
+static void test_list_swap(void** state) {
+    List list = (List) * (List*)*state;
+    assert_int_equal(0, list_count(list));
+
+    list_swap(list, list_count(list) - 1, -list_count(list));
+    list_swap(list, -list_count(list), list_count(list) - 1);
+    assert_int_equal(0, list_count(list));
+
+    char* str = "0123";
+
+    list_insert(list, list_count(list), str + 2);
+    list_insert(list, -list_count(list) - 1, str + 1);
+    list_insert(list, list_count(list), str + 3);
+    list_insert(list, -list_count(list) - 1, str + 0);
+    assert_int_equal(4, list_count(list));
+
+    list_swap(list, list_count(list), -list_count(list) - 1);
+    list_swap(list, -list_count(list) - 1, list_count(list));
+
+    list_swap(list, list_count(list) - 1, -list_count(list));
+    assert_int_equal((char)'0', *(char*)list_valueat(list, list_count(list) - 1));
+    assert_int_equal((char)'3', *(char*)list_valueat(list, -list_count(list)));
+    list_swap(list, -list_count(list), list_count(list) - 1);
+    assert_int_equal((char)'3', *(char*)list_valueat(list, list_count(list) - 1));
+    assert_int_equal((char)'0', *(char*)list_valueat(list, -list_count(list)));
+    assert_int_equal(4, list_count(list));
+}
+
+static void test_list_move(void** state) {
+    List list = (List) * (List*)*state;
+    assert_int_equal(0, list_count(list));
+
+    list_move(list, list_count(list) - 1, -list_count(list));
+    list_move(list, -list_count(list), list_count(list) - 1);
+    assert_int_equal(0, list_count(list));
+
+    char* str = "0123";
+
+    list_insert(list, list_count(list), str + 2);
+    list_insert(list, -list_count(list) - 1, str + 1);
+    list_insert(list, list_count(list), str + 3);
+    list_insert(list, -list_count(list) - 1, str + 0);
+    assert_int_equal(4, list_count(list));
+
+    list_move(list, list_count(list), -list_count(list) - 1);
+    list_move(list, -list_count(list) - 1, list_count(list));
+
+    list_move(list, list_count(list) - 1, -list_count(list));
+    assert_int_equal((char)'2', *(char*)list_valueat(list, list_count(list) - 1));
+    assert_int_equal((char)'3', *(char*)list_valueat(list, -list_count(list)));
+
+    list_move(list, -list_count(list), list_count(list) - 1);
+    assert_int_equal((char)'3', *(char*)list_valueat(list, list_count(list) - 1));
+    assert_int_equal((char)'0', *(char*)list_valueat(list, -list_count(list)));
+    assert_int_equal(4, list_count(list));
+}
+
+static void test_list_foreach(void** state) {
+    List list = (List) * (List*)*state;
+    assert_int_equal(0, list_count(list));
 }
 
 int main(int argc, char** argv) {
@@ -132,8 +244,13 @@ int main(int argc, char** argv) {
     const struct CMUnitTest test_group[] = {
         cmocka_unit_test_setup_teardown(test_list_create_count_destory, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_insert_count_count_set, setup, teardown),
-        cmocka_unit_test_setup_teardown(test_list_insert_valueat, setup, teardown),
-        cmocka_unit_test_setup_teardown(test_list_insert_indexof, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_valueat, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_indexof, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_remove, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_update, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_swap, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_move, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_foreach, setup, teardown),
     };
 
     return cmocka_run_group_tests(test_group, NULL, NULL);

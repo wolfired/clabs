@@ -16,15 +16,15 @@
 #ifndef LIST
 #define LIST
 
-typedef void* List;
-typedef void* Value;
+typedef void*    List;
+typedef void*    Value;
 typedef intptr_t Index;
-typedef size_t Count;
+typedef size_t   Count;
 
 typedef bool (*ValueIterator)(Index index, Value value, void* voidargs);
 
 void list_create(List* list_ptr);
-void list_destory(List* list_ptr);
+void list_delete(List* list_ptr);
 
 Count list_count(List list);
 Count list_count_set(List list, Count count);
@@ -42,10 +42,10 @@ Value list_valueat(List list, Index index);
 /**
  * @brief @b 迭代列表值
  * @ingroup list
- * 
- * @param list 
- * @param iterator 
- * @param voidargs 
+ *
+ * @param list
+ * @param iterator
+ * @param voidargs
  */
 void list_foreach(List list, ValueIterator iterator, void* voidargs);
 
