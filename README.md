@@ -1,6 +1,7 @@
 # clabs
 
 [![Build Status](https://app.travis-ci.com/wolfired/clabs.svg?branch=master)](https://app.travis-ci.com/wolfired/clabs)
+[![Main](https://github.com/wolfired/clabs/actions/workflows/main.yml/badge.svg)](https://github.com/wolfired/clabs/actions/workflows/main.yml)
 
 a c lab repo
 

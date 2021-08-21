@@ -1,15 +1,15 @@
 name: Main
-on: push
+on:
+  push:
+    branches: [master]
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: XXX
-        run: ls && pwd
       - name: Ready
         run: sudo apt-get update -y && sudo apt-get install -y cmake libcmocka-dev
       - name: CMake and Build
         run: cmake -B ./build && cmake --build ./build
-      - name: Run
+      - name: Run test
         run: ./build/src/container/list_singly_linked_test
