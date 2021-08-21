@@ -2,6 +2,12 @@ language: c
 os:
   - linux
 dist: focal
+arch:
+  - amd64
+before_install:
+  -- apt-get update -y
+install:
+  -- apt-get install -y libcmocka-dev
 script:
   - cmake -B ./build
   - cmake --build ./build
