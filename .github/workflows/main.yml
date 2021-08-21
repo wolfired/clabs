@@ -4,11 +4,11 @@ on:
     branches: [master]
 jobs:
   build:
-    name: Build
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
-      - name: Ready
-        run: sudo apt-get update -y && sudo apt-get install -y cmake libcmocka-dev
+      - name: Prepare
+        run: sudo apt-get update -y && sudo apt-get install -y cmake libcmocka-dev && cd ..
       - name: CMake and Build
         run: cmake -B ./build && cmake --build ./build
       - name: Run test
