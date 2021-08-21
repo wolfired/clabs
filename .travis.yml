@@ -1,2 +1,8 @@
-install: skip
-script: echo "hello ci!!";
+language: c
+os:
+  - linux
+dist: focal
+script:
+  - cmake -B ./build
+  - cmake --build ./build
+  - ./build/src/container/list_singly_linked_test
