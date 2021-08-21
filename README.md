@@ -1,5 +1,7 @@
 # clabs
 
+[![Build Status](https://app.travis-ci.com/wolfired/clabs.svg?branch=master)](https://app.travis-ci.com/wolfired/clabs)
+
 a c lab repo
 
 # usage
