@@ -16,10 +16,10 @@
 #ifndef LIST
 #define LIST
 
-typedef void*    List;
-typedef void*    Value;
-typedef intptr_t Index;
-typedef size_t   Count;
+typedef void*     List;
+typedef void*     Value;
+typedef ptrdiff_t Index;
+typedef size_t    Count;
 
 typedef bool (*ValueIterator)(Index index, Value value, void* voidargs);
 

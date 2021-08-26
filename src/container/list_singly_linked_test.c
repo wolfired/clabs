@@ -1,15 +1,10 @@
-#include <ctype.h>
-#include <errno.h>
-#include <float.h>
 #include <locale.h>
-#include <math.h>
-#include <setjmp.h>
 #include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include <stddef.h>
+#include <setjmp.h>
 
 #include <cmocka.h>
 
@@ -65,7 +60,7 @@ static int teardown(void** state) {
     return 0;
 }
 
-static void test_list_create_count_destory(void** state) {
+static void test_list_create_count_delete(void** state) {
     List list = (List) * (List*)*state;
     assert_int_equal(0, list_count(list));
 }
@@ -236,7 +231,7 @@ int main(int argc, char** argv) {
     setlocale(LC_ALL, "C");
 
     const struct CMUnitTest test_group[] = {
-        cmocka_unit_test_setup_teardown(test_list_create_count_destory, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_create_count_delete, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_insert_count_count_set, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_insert_foreach, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_valueat, setup, teardown),

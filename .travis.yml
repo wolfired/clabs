@@ -12,3 +12,4 @@ script:
   - cmake -B ./build
   - cmake --build ./build
   - ./build/src/container/list_singly_linked_test
+  - ./build/src/bufio/buf_test

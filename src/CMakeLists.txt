@@ -1,3 +1,4 @@
+add_subdirectory(bufio)
 add_subdirectory(container)
 
 set(
@@ -9,6 +10,7 @@ set(
     gc/mark_sweep.h
     hash/adler32.h
     hash/crc32.h
+    image/png.h
 )
 set(
     SRCS
@@ -18,6 +20,7 @@ set(
     gc/mark_sweep.c
     hash/adler32.c
     hash/crc32.c
+    image/png.c
 )
 
 add_library(clabs_static STATIC ${SRCS})
