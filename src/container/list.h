@@ -23,30 +23,30 @@ typedef size_t   Count;
 
 typedef bool (*ValueIterator)(Index index, Value value, void* voidargs);
 
-void list_create(List* list_ptr);
-void list_delete(List* list_ptr);
+void list_create(List* p_thiz);
+void list_delete(List* p_thiz);
 
-Count list_count(List list);
-Count list_count_set(List list, Count count);
+Count list_count(List thiz);
+Count list_count_set(List thiz, Count count);
 
-Count list_insert(List list, Index index, Value value);
-Count list_remove(List list, Index index, Value* retval);
-Value list_update(List list, Index index, Value newval);
+Count list_insert(List thiz, Index index, Value value);
+Count list_remove(List thiz, Index index, Value* p_retval);
+Value list_update(List thiz, Index index, Value newval);
 
-void list_swap(List list, Index i, Index j);
-void list_move(List list, Index f, Index t);
+void list_swap(List thiz, Index i, Index j);
+void list_move(List thiz, Index f, Index t);
 
-Index list_indexof(List list, Value value);
-Value list_valueat(List list, Index index);
+Index list_indexof(List thiz, Value value);
+Value list_valueat(List thiz, Index index);
 
 /**
  * @brief @b 迭代列表值
  * @ingroup list
  *
- * @param list
+ * @param thiz
  * @param iterator
  * @param voidargs
  */
-void list_foreach(List list, ValueIterator iterator, void* voidargs);
+void list_foreach(List thiz, ValueIterator iterator, void* voidargs);
 
 #endif

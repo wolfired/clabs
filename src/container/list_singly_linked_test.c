@@ -24,24 +24,44 @@
 
 #include "list_singly_linked.h"
 
+typedef struct {
+    char record[1024];
+} print_each_args;
+
+bool print_each(Index index, Value value, void* voidargs) {
+    // printf("%d -> %c\n", index, (char)*(char*)value);
+    print_each_args* args = (print_each_args*)voidargs;
+    args->record[index] = (char)*(char*)value;
+    return true;
+}
+
+char* make_list(char* str, List list) {
+    list_insert(list, list_count(list), str + 2);
+    list_insert(list, -list_count(list) - 1, str + 1);
+    list_insert(list, list_count(list), str + 3);
+    list_insert(list, -list_count(list) - 1, str + 0);
+    assert_int_equal(4, list_count(list));
+    return str;
+}
+
 static int setup(void** state) {
-    List* plist = (List*)malloc(sizeof(List));
+    List* p_list = (List*)malloc(sizeof(List));
 
-    *plist = NULL;
+    *p_list = NULL;
 
-    list_create(plist);
-    assert_non_null(*plist);
+    list_create(p_list);
+    assert_non_null(*p_list);
 
-    *state = plist;
+    *state = p_list;
 
     return 0;
 }
 
 static int teardown(void** state) {
-    List* plist = (List*)*state;
-    list_delete(plist);
-    assert_null(*plist);
-    free(plist);
+    List* p_list = (List*)*state;
+    list_delete(p_list);
+    assert_null(*p_list);
+    free(p_list);
     return 0;
 }
 
@@ -74,13 +94,7 @@ static void test_list_valueat(void** state) {
     assert_null(list_valueat(list, list_count(list) - 1));
     assert_null(list_valueat(list, -list_count(list)));
 
-    char* str = "0123";
-
-    list_insert(list, list_count(list), str + 2);
-    list_insert(list, -list_count(list) - 1, str + 1);
-    list_insert(list, list_count(list), str + 3);
-    list_insert(list, -list_count(list) - 1, str + 0);
-    assert_int_equal(4, list_count(list));
+    char* str = make_list("0123", list);
 
     assert_null(list_valueat(list, list_count(list)));
     assert_null(list_valueat(list, -list_count(list) - 1));
@@ -92,14 +106,9 @@ static void test_list_valueat(void** state) {
 static void test_list_indexof(void** state) {
     List list = (List) * (List*)*state;
     assert_int_equal(0, list_count(list));
+    assert_int_equal(-1, list_indexof(list, (Value)1));
 
-    char* str = "0123";
-
-    list_insert(list, list_count(list), str + 2);
-    list_insert(list, -list_count(list) - 1, str + 1);
-    list_insert(list, list_count(list), str + 3);
-    list_insert(list, -list_count(list) - 1, str + 0);
-    assert_int_equal(4, list_count(list));
+    char* str = make_list("0123", list);
 
     assert_int_equal(0, list_indexof(list, str + 0));
     assert_int_equal(1, list_indexof(list, str + 1));
@@ -118,13 +127,7 @@ static void test_list_remove(void** state) {
     assert_int_equal(0, list_remove(list, -list_count(list), &value));
     assert_null(value);
 
-    char* str = "0123";
-
-    list_insert(list, list_count(list), str + 2);
-    list_insert(list, -list_count(list) - 1, str + 1);
-    list_insert(list, list_count(list), str + 3);
-    list_insert(list, -list_count(list) - 1, str + 0);
-    assert_int_equal(4, list_count(list));
+    char* str = make_list("0123", list);
 
     assert_int_equal(4, list_remove(list, list_count(list), &value));
     assert_null(value);
@@ -157,13 +160,7 @@ static void test_list_update(void** state) {
     assert_ptr_equal(NULL, list_update(list, list_count(list) - 1, NULL));
     assert_ptr_equal(NULL, list_update(list, -list_count(list), NULL));
 
-    char* str = "01234567";
-
-    list_insert(list, list_count(list), str + 2);
-    list_insert(list, -list_count(list) - 1, str + 1);
-    list_insert(list, list_count(list), str + 3);
-    list_insert(list, -list_count(list) - 1, str + 0);
-    assert_int_equal(4, list_count(list));
+    char* str = make_list("01234567", list);
 
     assert_ptr_equal(NULL, list_update(list, list_count(list), NULL));
     assert_ptr_equal(NULL, list_update(list, -list_count(list) - 1, NULL));
@@ -184,13 +181,7 @@ static void test_list_swap(void** state) {
     list_swap(list, -list_count(list), list_count(list) - 1);
     assert_int_equal(0, list_count(list));
 
-    char* str = "0123";
-
-    list_insert(list, list_count(list), str + 2);
-    list_insert(list, -list_count(list) - 1, str + 1);
-    list_insert(list, list_count(list), str + 3);
-    list_insert(list, -list_count(list) - 1, str + 0);
-    assert_int_equal(4, list_count(list));
+    char* str = make_list("0123", list);
 
     list_swap(list, list_count(list), -list_count(list) - 1);
     list_swap(list, -list_count(list) - 1, list_count(list));
@@ -212,13 +203,7 @@ static void test_list_move(void** state) {
     list_move(list, -list_count(list), list_count(list) - 1);
     assert_int_equal(0, list_count(list));
 
-    char* str = "0123";
-
-    list_insert(list, list_count(list), str + 2);
-    list_insert(list, -list_count(list) - 1, str + 1);
-    list_insert(list, list_count(list), str + 3);
-    list_insert(list, -list_count(list) - 1, str + 0);
-    assert_int_equal(4, list_count(list));
+    char* str = make_list("0123", list);
 
     list_move(list, list_count(list), -list_count(list) - 1);
     list_move(list, -list_count(list) - 1, list_count(list));
@@ -233,9 +218,18 @@ static void test_list_move(void** state) {
     assert_int_equal(4, list_count(list));
 }
 
-static void test_list_foreach(void** state) {
+static void test_list_insert_foreach(void** state) {
     List list = (List) * (List*)*state;
     assert_int_equal(0, list_count(list));
+
+    char* str = make_list("0123", list);
+
+    print_each_args args;
+    memset(args.record, 0, 1024);
+
+    list_foreach(list, print_each, &args);
+
+    assert_int_equal(0, strcmp(str, args.record));
 }
 
 int main(int argc, char** argv) {
@@ -244,13 +238,13 @@ int main(int argc, char** argv) {
     const struct CMUnitTest test_group[] = {
         cmocka_unit_test_setup_teardown(test_list_create_count_destory, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_insert_count_count_set, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_insert_foreach, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_valueat, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_indexof, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_remove, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_update, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_swap, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_move, setup, teardown),
-        cmocka_unit_test_setup_teardown(test_list_foreach, setup, teardown),
     };
 
     return cmocka_run_group_tests(test_group, NULL, NULL);
