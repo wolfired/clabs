@@ -82,6 +82,9 @@ static void test_list_insert_count_count_set(void** state) {
     list_insert(list, list_count(list) + 1, NULL);
     list_insert(list, -list_count(list) - 1 - 1, NULL);
     assert_int_equal(2, list_count(list));
+
+    list_count_set(list, 1);
+    assert_int_equal(1, list_count(list));
 }
 
 static void test_list_valueat(void** state) {
