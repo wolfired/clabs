@@ -53,6 +53,5 @@ dkms.conf
 
 # Customs
 /.vscode
-/ep_*
 /build
 /html

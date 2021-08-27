@@ -2,6 +2,7 @@
 
 [![Build Status](https://app.travis-ci.com/wolfired/clabs.svg?branch=master)](https://app.travis-ci.com/wolfired/clabs)
 [![Main](https://github.com/wolfired/clabs/actions/workflows/main.yml/badge.svg)](https://github.com/wolfired/clabs/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/wolfired/clabs/branch/master/graph/badge.svg?token=S4GES4NLKW)](https://codecov.io/gh/wolfired/clabs)
 
 a c lab repo
 

@@ -7,7 +7,7 @@ arch:
 before_install:
   - sudo apt-get update -y
 install:
-  - sudo apt-get install -y libcmocka-dev
+  - sudo apt-get install -y gcovr
 script:
   - cmake -B ./build
   - cmake --build ./build
