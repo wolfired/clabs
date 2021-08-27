@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <setjmp.h>
-#include <cmocka.h>
+
 #include <cmocka.h>
 
 #define UNIT_TESTINT
@@ -22,14 +22,15 @@
 #include "list_singly_linked.h"
 
 typedef struct {
+    char stop_at;
     char record[1024];
 } print_each_args;
 
 bool print_each(Index index, Value value, void* voidargs) {
     // printf("%d -> %c\n", index, (char)*(char*)value);
     print_each_args* args = (print_each_args*)voidargs;
-    args->record[index] = (char)*(char*)value;
-    return true;
+    args->record[index]   = (char)*(char*)value;
+    return 0 == args->stop_at || args->stop_at != (char)*(char*)value;
 }
 
 char* make_list(char* str, List list) {
@@ -223,15 +224,23 @@ static void test_list_insert_foreach(void** state) {
     assert_int_equal(0, list_count(list));
 
     print_each_args args;
+
+    args.stop_at = 0;
     memset(args.record, 0, 1024);
     list_foreach(list, print_each, &args);
     assert_int_equal(0, strcmp("", args.record));
 
     char* str = make_list("0123", list);
 
+    args.stop_at = 0;
     memset(args.record, 0, 1024);
     list_foreach(list, print_each, &args);
     assert_int_equal(0, strcmp(str, args.record));
+
+    args.stop_at = '2';
+    memset(args.record, 0, 1024);
+    list_foreach(list, print_each, &args);
+    assert_int_equal(0, strcmp("012", args.record));
 }
 
 int main(int argc, char** argv) {
