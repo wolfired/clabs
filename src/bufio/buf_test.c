@@ -1,11 +1,12 @@
 #include <locale.h>
-#include <setjmp.h>
 #include <stdbool.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <stdarg.h>
+#include <stddef.h>
+#include <setjmp.h>
 #include <cmocka.h>
 
 #include "buf.h"
