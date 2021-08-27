@@ -25,6 +25,9 @@ cmake -DCMAKE_INSTALL_PREFIX=/home/bed -B ./build && \
 cmake --build ./build && \
 cmake --install ./build
 
+# test and codecov
+cd ./build && make test codecov && cd ..
+
 # gen doc
 doxygen
 
