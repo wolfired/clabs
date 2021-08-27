@@ -15,4 +15,4 @@ jobs:
         run: cmake -B ./build && cmake --build ./build
       - name: Run test
         run: |
-          cd ./build && make test codecov && echo "$CODECOV_TOKEN" > .cct && bash <(curl -s https://codecov.io/bash) -f ./codecov.xml -t @./.cct
+          cd ./build && make test codecov && echo "$CODECOV_TOKEN" > ./cct && bash <(curl -s https://codecov.io/bash) -f ./codecov.xml -t @./cct
