@@ -222,13 +222,15 @@ static void test_list_insert_foreach(void** state) {
     List list = (List) * (List*)*state;
     assert_int_equal(0, list_count(list));
 
-    char* str = make_list("0123", list);
-
     print_each_args args;
     memset(args.record, 0, 1024);
-
     list_foreach(list, print_each, &args);
+    assert_int_equal(0, strcmp("", args.record));
 
+    char* str = make_list("0123", list);
+
+    memset(args.record, 0, 1024);
+    list_foreach(list, print_each, &args);
     assert_int_equal(0, strcmp(str, args.record));
 }
 
