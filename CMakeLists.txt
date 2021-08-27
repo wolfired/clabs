@@ -4,8 +4,8 @@ project(clabs VERSION 0.0.1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ./cmake/modules)
 
-# include(codecov)
-# include(ep_cmocka)
+include(codecov)
+include(ep_cmocka)
 
 enable_testing()
 

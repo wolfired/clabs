@@ -11,5 +11,5 @@ install:
 script:
   - cmake -B ./build
   - cmake --build ./build
-  # - cd ./build && make test codecov && echo "$CODECOV_TOKEN" > ./cct && bash <(curl -s https://codecov.io/bash) -f ./codecov.xml -t @./cct
+  - make -C ./build test codecov && echo "$CODECOV_TOKEN" > ./build/cct && bash <(curl -s https://codecov.io/bash) -f ./build/codecov.xml -t @./build/cct
 
