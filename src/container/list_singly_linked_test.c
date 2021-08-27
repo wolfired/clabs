@@ -240,8 +240,8 @@ int main(int argc, char** argv) {
         cmocka_unit_test_setup_teardown(test_list_indexof, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_remove, setup, teardown),
         cmocka_unit_test_setup_teardown(test_list_update, setup, teardown),
-        // cmocka_unit_test_setup_teardown(test_list_swap, setup, teardown),
-        // cmocka_unit_test_setup_teardown(test_list_move, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_swap, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_list_move, setup, teardown),
     };
 
     return cmocka_run_group_tests(test_group, NULL, NULL);
