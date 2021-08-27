@@ -8,11 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Prepare
-        run: sudo apt-get update -y && sudo apt-get install -y cmake gcovr
+        run: sudo apt-get update -y && sudo apt-get install -y gcovr
       - name: Checkout
         uses: actions/checkout@v2
       - name: CMake and Build
         run: cmake -B ./build && cmake --build ./build
       - name: Run test
         run: |
-          cd ./build && make test codecov && echo "${{ secrets.CODECOV_TOKEN }}" > ./cct && bash <(curl -s https://codecov.io/bash) -f ./codecov.xml -t @./cct
+          echo 0
+          # cd ./build && make test codecov && echo "${{ secrets.CODECOV_TOKEN }}" > ./cct && bash <(curl -s https://codecov.io/bash) -f ./codecov.xml -t @./cct
