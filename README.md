@@ -26,7 +26,7 @@ cmake --build ./build && \
 cmake --install ./build
 
 # test and codecov
-cd ./build && make test codecov && cd ..
+make -C ./build test codecov
 
 # gen doc
 doxygen
