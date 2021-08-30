@@ -190,8 +190,7 @@ static void test_list_swap(void** state) {
     list_swap(list, list_count(list) - 1, -1);
     list_swap(list, 0, -list_count(list));
 
-    list_swap(list, list_count(list) - 1, list_count(list) + 1);
-    list_swap(list, -list_count(list) - 1 - 1, -list_count(list));
+    list_swap(list, -list_count(list) - 1 - 1, list_count(list) + 1);
 
     list_swap(list, list_count(list) - 1, -list_count(list));
     assert_int_equal((char)'0', *(char*)list_valueat(list, list_count(list) - 1));
