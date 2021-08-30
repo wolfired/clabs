@@ -3,6 +3,7 @@ add_subdirectory(container)
 
 set(
     INCS
+    bufio/buf.h
     compress/zlib.h
     container/list.h
     container/list_singly_linked.h
@@ -14,6 +15,7 @@ set(
 )
 set(
     SRCS
+    bufio/buf.c
     compress/zlib.c
     container/list_singly_linked.c
     container/list_doubly_linked.c
