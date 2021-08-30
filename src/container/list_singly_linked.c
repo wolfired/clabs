@@ -218,7 +218,8 @@ void list_swap(List thiz, Index i, Index j) {
     if(NULL == node_i || NULL == node_i->next) { return; }
 
     Node node_j = node_at(thiz, j);
-    if(NULL == node_j || NULL == node_j->next) { return; }
+    if(NULL == node_j) { return; }
+    if(NULL == node_j->next) { return; }
 
     node_i->next->value = (Value)((uintptr_t)node_i->next->value ^ (uintptr_t)node_j->next->value);
     node_j->next->value = (Value)((uintptr_t)node_i->next->value ^ (uintptr_t)node_j->next->value);
