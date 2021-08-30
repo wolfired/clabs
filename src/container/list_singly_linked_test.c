@@ -212,6 +212,9 @@ static void test_list_move(void** state) {
     list_move(list, list_count(list), -list_count(list) - 1);
     list_move(list, -list_count(list) - 1, list_count(list));
 
+    list_swap(list, list_count(list) - 1, -1);
+    list_swap(list, 0, -list_count(list));
+
     list_move(list, list_count(list) - 1, -list_count(list));
     assert_int_equal((char)'2', *(char*)list_valueat(list, list_count(list) - 1));
     assert_int_equal((char)'3', *(char*)list_valueat(list, -list_count(list)));
