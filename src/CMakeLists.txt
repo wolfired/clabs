@@ -1,4 +1,5 @@
 add_subdirectory(bufio)
+add_subdirectory(hash)
 add_subdirectory(container)
 
 set(
@@ -26,11 +27,11 @@ set(
 )
 
 add_library(clabs_static STATIC ${SRCS})
-target_include_directories(clabs_static PUBLIC .)
+target_include_directories(clabs_static PUBLIC . ./bufio ./hash)
 set_target_properties(clabs_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 add_library(clabs_shared SHARED ${SRCS})
-target_include_directories(clabs_shared PUBLIC .)
+target_include_directories(clabs_shared PUBLIC . ./bufio ./hash)
 set_target_properties(clabs_shared PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 set_target_properties(clabs_shared PROPERTIES VERSION ${CMAKE_PROJECT_VERSION} SOVERSION ${CMAKE_PROJECT_VERSION_MAJOR})
 

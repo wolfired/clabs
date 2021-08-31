@@ -27,7 +27,7 @@ static int setup(void** state) {
 
     *p_buf = NULL;
 
-    buf_create(p_buf, 128);
+    buf_create(p_buf, 0);
     assert_non_null(*p_buf);
 
     *state = p_buf;
@@ -47,37 +47,35 @@ static void test_buf_create_len_cap_delete(void** state) {
     Buffer buf = (Buffer) * (Buffer*)*state;
 
     assert_int_equal(0, buf_len(buf));
-    assert_int_equal(128, buf_cap(buf));
+    assert_int_equal(0, buf_cap(buf));
 }
 
 static void test_buf_write_read(void** state) {
     Buffer buf = (Buffer) * (Buffer*)*state;
 
     buf_write_uint8(buf, 0x12);
-    assert_int_equal(1, buf_len(buf));
-
-    buf_write_uint16_be(buf, 0x1234);
-    assert_int_equal(3, buf_len(buf));
-    buf_write_uint16_le(buf, 0x1234);
-    assert_int_equal(5, buf_len(buf));
-
-    buf_write_uint32_be(buf, 0x12345678);
-    assert_int_equal(9, buf_len(buf));
-    buf_write_uint32_le(buf, 0x12345678);
-    assert_int_equal(13, buf_len(buf));
-
-    buf_write_uint64_be(buf, 0x1234567890987654);
-    assert_int_equal(21, buf_len(buf));
     buf_write_uint64_le(buf, 0x1234567890987654);
-    assert_int_equal(29, buf_len(buf));
+    buf_write_uint16_be(buf, 0x1234);
+    buf_write_float_le(buf, 3.14);
+    buf_write_uint32_le(buf, 0x12345678);
+    buf_write_double_be(buf, 1.414);
+    buf_write_uint16_le(buf, 0x1234);
+    buf_write_uint32_be(buf, 0x12345678);
+    buf_write_double_le(buf, 1.414);
+    buf_write_uint64_be(buf, 0x1234567890987654);
+    buf_write_float_be(buf, 3.14);
 
     assert_int_equal(0x12, buf_read_uint8(buf));
+    assert_int_equal(0x1234567890987654, buf_read_uint64_le(buf));
     assert_int_equal(0x1234, buf_read_uint16_be(buf));
+    assert_int_equal(3.14, buf_read_float_le(buf));
+    assert_int_equal(0x12345678, buf_read_uint32_le(buf));
+    assert_int_equal(1.414, buf_read_double_be(buf));
     assert_int_equal(0x1234, buf_read_uint16_le(buf));
     assert_int_equal(0x12345678, buf_read_uint32_be(buf));
-    assert_int_equal(0x12345678, buf_read_uint32_le(buf));
+    assert_int_equal(1.414, buf_read_double_le(buf));
     assert_int_equal(0x1234567890987654, buf_read_uint64_be(buf));
-    assert_int_equal(0x1234567890987654, buf_read_uint64_le(buf));
+    assert_int_equal(3.14, buf_read_float_be(buf));
 }
 
 int main(int argc, char** argv) {

@@ -19,5 +19,5 @@ void crc32_update_bytes(uint32_t* p_crc, const uint8_t* bytes, size_t bytes_coun
 uint32_t crc32(const uint8_t* bytes, size_t bytes_count) {
     uint32_t crc = ~0;
     crc32_update_bytes(&crc, bytes, bytes_count);
-    return crc;
+    return ~crc;
 }
