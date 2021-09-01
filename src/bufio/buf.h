@@ -8,8 +8,15 @@ void   buf_delete(Buffer* p_thiz);
 size_t buf_len(Buffer thiz);
 size_t buf_cap(Buffer thiz);
 
+ptrdiff_t buf_mark_pointer_w(Buffer thiz);
+ptrdiff_t buf_mark_pointer_r(Buffer thiz);
+uint8_t* buf_take_pointer(Buffer thiz, size_t skip);
+
 void   buf_write_bytes(Buffer thiz, uint8_t* bytes, size_t count);
 size_t buf_read_bytes(Buffer thiz, uint8_t* bytes, size_t count);
+
+void   buf_write_bytes_reverse(Buffer thiz, uint8_t* bytes, size_t count);
+size_t buf_read_bytes_reverse(Buffer thiz, uint8_t* bytes, size_t count);
 
 void    buf_write_uint8(Buffer thiz, uint8_t value);
 uint8_t buf_read_uint8(Buffer thiz);

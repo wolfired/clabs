@@ -22,7 +22,7 @@
 #define free test_free
 #endif
 
-static void test_adler3232(void** state) {
+static void test_adler32(void** state) {
     char* str;
 
     str = "";
@@ -126,7 +126,7 @@ int main(int argc, char** argv) {
     setlocale(LC_ALL, "C");
 
     const struct CMUnitTest test_group[] = {
-        cmocka_unit_test(test_adler3232),
+        cmocka_unit_test(test_adler32),
     };
 
     return cmocka_run_group_tests(test_group, NULL, NULL);

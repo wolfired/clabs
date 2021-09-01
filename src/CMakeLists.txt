@@ -1,6 +1,7 @@
 add_subdirectory(bufio)
-add_subdirectory(hash)
 add_subdirectory(container)
+add_subdirectory(hash)
+add_subdirectory(image)
 
 set(
     INCS
@@ -13,6 +14,7 @@ set(
     hash/adler32.h
     hash/crc32.h
     image/png.h
+    math/linear_algebra.h
 )
 set(
     SRCS
@@ -24,14 +26,15 @@ set(
     hash/adler32.c
     hash/crc32.c
     image/png.c
+    math/linear_algebra.c
 )
 
 add_library(clabs_static STATIC ${SRCS})
-target_include_directories(clabs_static PUBLIC . ./bufio ./hash)
+target_include_directories(clabs_static PUBLIC . ./bufio ./hash ./image)
 set_target_properties(clabs_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 add_library(clabs_shared SHARED ${SRCS})
-target_include_directories(clabs_shared PUBLIC . ./bufio ./hash)
+target_include_directories(clabs_shared PUBLIC . ./bufio ./hash ./image)
 set_target_properties(clabs_shared PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 set_target_properties(clabs_shared PROPERTIES VERSION ${CMAKE_PROJECT_VERSION} SOVERSION ${CMAKE_PROJECT_VERSION_MAJOR})
 
