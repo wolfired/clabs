@@ -81,6 +81,14 @@ static void buf_resize_cap(Buffer thiz, size_t count) {
     }
 }
 
+static inline bool is_big_endian() {
+    static union {
+        uint16_t value;
+        uint8_t  bytes[2];
+    } checker = {value: 0xFF00};
+    return 0xFF == checker.bytes[0];
+}
+
 void buf_write_bytes(Buffer thiz, uint8_t* bytes, size_t count) {
     Buf buf = (Buf)thiz;
 
@@ -121,18 +129,6 @@ size_t buf_read_bytes_reverse(Buffer thiz, uint8_t* bytes, size_t count) {
     return count;
 }
 
-#if defined(_MSC_VER) || (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__))
-static void (*bele_write_bytes)(Buffer thiz, uint8_t* bytes, size_t count)          = buf_write_bytes_reverse;
-static void (*bele_write_bytes_reverse)(Buffer thiz, uint8_t* bytes, size_t count)  = buf_write_bytes;
-static size_t (*bele_read_bytes)(Buffer thiz, uint8_t* bytes, size_t count)         = buf_read_bytes_reverse;
-static size_t (*bele_read_bytes_reverse)(Buffer thiz, uint8_t* bytes, size_t count) = buf_read_bytes;
-#else
-static void (*bele_write_bytes)(Buffer thiz, uint8_t* bytes, size_t count)          = buf_write_bytes;
-static void (*bele_write_bytes_reverse)(Buffer thiz, uint8_t* bytes, size_t count)  = buf_write_bytes_reverse;
-static size_t (*bele_read_bytes)(Buffer thiz, uint8_t* bytes, size_t count)         = buf_read_bytes;
-static size_t (*bele_read_bytes_reverse)(Buffer thiz, uint8_t* bytes, size_t count) = buf_read_bytes_reverse;
-#endif
-
 void buf_write_uint8(Buffer thiz, uint8_t value) {
     buf_write_bytes(thiz, &value, 1);
 }
@@ -145,109 +141,189 @@ uint8_t buf_read_uint8(Buffer thiz) {
 
 void buf_write_uint16_be(Buffer thiz, uint16_t value) {
     Number number = {uint16: value};
-    bele_write_bytes(thiz, number.int16_bytes, 2);
+    if(is_big_endian()) {
+        buf_write_bytes(thiz, number.int16_bytes, 2);
+    } else {
+        buf_write_bytes_reverse(thiz, number.int16_bytes, 2);
+    }
 }
 
 uint16_t buf_read_uint16_be(Buffer thiz) {
     Number number;
-    bele_read_bytes(thiz, number.int16_bytes, 2);
+    if(is_big_endian()) {
+        buf_read_bytes(thiz, number.int16_bytes, 2);
+    } else {
+        buf_read_bytes_reverse(thiz, number.int16_bytes, 2);
+    }
     return number.uint16;
 }
 
 void buf_write_uint16_le(Buffer thiz, uint16_t value) {
     Number number = {uint16: value};
-    bele_write_bytes_reverse(thiz, number.int16_bytes, 2);
+    if(is_big_endian()) {
+        buf_write_bytes_reverse(thiz, number.int16_bytes, 2);
+    } else {
+        buf_write_bytes(thiz, number.int16_bytes, 2);
+    }
 }
 
 uint16_t buf_read_uint16_le(Buffer thiz) {
     Number number;
-    bele_read_bytes_reverse(thiz, number.int16_bytes, 2);
+    if(is_big_endian()) {
+        buf_read_bytes_reverse(thiz, number.int16_bytes, 2);
+    } else {
+        buf_read_bytes(thiz, number.int16_bytes, 2);
+    }
     return number.uint16;
 }
 
 void buf_write_uint32_be(Buffer thiz, uint32_t value) {
     Number number = {uint32: value};
-    bele_write_bytes(thiz, number.int32_bytes, 4);
+    if(is_big_endian()) {
+        buf_write_bytes(thiz, number.int32_bytes, 4);
+    } else {
+        buf_write_bytes_reverse(thiz, number.int32_bytes, 4);
+    }
 }
 
 uint32_t buf_read_uint32_be(Buffer thiz) {
     Number number;
-    bele_read_bytes(thiz, number.int32_bytes, 4);
+    if(is_big_endian()) {
+        buf_read_bytes(thiz, number.int32_bytes, 4);
+    } else {
+        buf_read_bytes_reverse(thiz, number.int32_bytes, 4);
+    }
     return number.uint32;
 }
 
 void buf_write_uint32_le(Buffer thiz, uint32_t value) {
     Number number = {uint32: value};
-    bele_write_bytes_reverse(thiz, number.int32_bytes, 4);
+    if(is_big_endian()) {
+        buf_write_bytes_reverse(thiz, number.int32_bytes, 4);
+    } else {
+        buf_write_bytes(thiz, number.int32_bytes, 4);
+    }
 }
 
 uint32_t buf_read_uint32_le(Buffer thiz) {
     Number number;
-    bele_read_bytes_reverse(thiz, number.int32_bytes, 4);
+    if(is_big_endian()) {
+        buf_read_bytes_reverse(thiz, number.int32_bytes, 4);
+    } else {
+        buf_read_bytes(thiz, number.int32_bytes, 4);
+    }
     return number.uint32;
 }
 
 void buf_write_uint64_be(Buffer thiz, uint64_t value) {
     Number number = {uint64: value};
-    bele_write_bytes(thiz, number.int64_bytes, 8);
+    if(is_big_endian()) {
+        buf_write_bytes(thiz, number.int64_bytes, 8);
+    } else {
+        buf_write_bytes_reverse(thiz, number.int64_bytes, 8);
+    }
 }
 
 uint64_t buf_read_uint64_be(Buffer thiz) {
     Number number;
-    bele_read_bytes(thiz, number.int64_bytes, 8);
+    if(is_big_endian()) {
+        buf_read_bytes(thiz, number.int64_bytes, 8);
+    } else {
+        buf_read_bytes_reverse(thiz, number.int64_bytes, 8);
+    }
     return number.uint64;
 }
 
 void buf_write_uint64_le(Buffer thiz, uint64_t value) {
     Number number = {uint64: value};
-    bele_write_bytes_reverse(thiz, number.int64_bytes, 8);
+    if(is_big_endian()) {
+        buf_write_bytes_reverse(thiz, number.int64_bytes, 8);
+    } else {
+        buf_write_bytes(thiz, number.int64_bytes, 8);
+    }
 }
 uint64_t buf_read_uint64_le(Buffer thiz) {
     Number number;
-    bele_read_bytes_reverse(thiz, number.int64_bytes, 8);
+    if(is_big_endian()) {
+        buf_read_bytes_reverse(thiz, number.int64_bytes, 8);
+    } else {
+        buf_read_bytes(thiz, number.int64_bytes, 8);
+    }
     return number.uint64;
 }
 
 void buf_write_float_be(Buffer thiz, float value) {
     Number number = {floatN: value};
-    bele_write_bytes(thiz, number.floatN_bytes, sizeof(float));
+    if(is_big_endian()) {
+        buf_write_bytes(thiz, number.floatN_bytes, sizeof(float));
+    } else {
+        buf_write_bytes_reverse(thiz, number.floatN_bytes, sizeof(float));
+    }
 }
 
 float buf_read_float_be(Buffer thiz) {
     Number number;
-    bele_read_bytes(thiz, number.floatN_bytes, sizeof(float));
+    if(is_big_endian()) {
+        buf_read_bytes(thiz, number.floatN_bytes, sizeof(float));
+    } else {
+        buf_read_bytes_reverse(thiz, number.floatN_bytes, sizeof(float));
+    }
     return number.floatN;
 }
 
 void buf_write_float_le(Buffer thiz, float value) {
     Number number = {floatN: value};
-    bele_write_bytes_reverse(thiz, number.floatN_bytes, sizeof(float));
+    if(is_big_endian()) {
+        buf_write_bytes_reverse(thiz, number.floatN_bytes, sizeof(float));
+    } else {
+        buf_write_bytes(thiz, number.floatN_bytes, sizeof(float));
+    }
 }
 
 float buf_read_float_le(Buffer thiz) {
     Number number;
-    bele_read_bytes_reverse(thiz, number.floatN_bytes, sizeof(float));
+    if(is_big_endian()) {
+        buf_read_bytes_reverse(thiz, number.floatN_bytes, sizeof(float));
+    } else {
+        buf_read_bytes(thiz, number.floatN_bytes, sizeof(float));
+    }
     return number.floatN;
 }
 
 void buf_write_double_be(Buffer thiz, double value) {
     Number number = {doubleN: value};
-    bele_write_bytes(thiz, number.doubleN_bytes, sizeof(double));
+    if(is_big_endian()) {
+        buf_write_bytes(thiz, number.doubleN_bytes, sizeof(double));
+    } else {
+        buf_write_bytes_reverse(thiz, number.doubleN_bytes, sizeof(double));
+    }
 }
 
 double buf_read_double_be(Buffer thiz) {
     Number number;
-    bele_read_bytes(thiz, number.doubleN_bytes, sizeof(double));
+    if(is_big_endian()) {
+        buf_read_bytes(thiz, number.doubleN_bytes, sizeof(double));
+    } else {
+        buf_read_bytes_reverse(thiz, number.doubleN_bytes, sizeof(double));
+    }
     return number.doubleN;
 }
 
 void buf_write_double_le(Buffer thiz, double value) {
     Number number = {doubleN: value};
-    bele_write_bytes_reverse(thiz, number.doubleN_bytes, sizeof(double));
+    if(is_big_endian()) {
+        buf_write_bytes_reverse(thiz, number.doubleN_bytes, sizeof(double));
+    } else {
+        buf_write_bytes(thiz, number.doubleN_bytes, sizeof(double));
+    }
 }
 
 double buf_read_double_le(Buffer thiz) {
     Number number;
-    bele_read_bytes_reverse(thiz, number.doubleN_bytes, sizeof(double));
+    if(is_big_endian()) {
+        buf_read_bytes_reverse(thiz, number.doubleN_bytes, sizeof(double));
+    } else {
+        buf_read_bytes(thiz, number.doubleN_bytes, sizeof(double));
+    }
     return number.doubleN;
 }
