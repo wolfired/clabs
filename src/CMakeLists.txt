@@ -1,4 +1,5 @@
 add_subdirectory(bufio)
+add_subdirectory(compress)
 add_subdirectory(container)
 add_subdirectory(hash)
 add_subdirectory(image)
@@ -6,6 +7,7 @@ add_subdirectory(image)
 set(
     INCS
     bufio/buf.h
+    compress/flate.h
     compress/zlib.h
     container/list.h
     container/list_singly_linked.h
@@ -19,6 +21,7 @@ set(
 set(
     SRCS
     bufio/buf.c
+    compress/flate.c
     compress/zlib.c
     container/list_singly_linked.c
     container/list_doubly_linked.c
@@ -30,11 +33,11 @@ set(
 )
 
 add_library(clabs_static STATIC ${SRCS})
-target_include_directories(clabs_static PUBLIC . ./bufio ./hash ./image)
+target_include_directories(clabs_static PUBLIC . ./bufio ./compress ./hash ./image)
 set_target_properties(clabs_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 add_library(clabs_shared SHARED ${SRCS})
-target_include_directories(clabs_shared PUBLIC . ./bufio ./hash ./image)
+target_include_directories(clabs_shared PUBLIC . ./bufio ./compress ./hash ./image)
 set_target_properties(clabs_shared PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 set_target_properties(clabs_shared PROPERTIES VERSION ${CMAKE_PROJECT_VERSION} SOVERSION ${CMAKE_PROJECT_VERSION_MAJOR})
 

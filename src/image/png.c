@@ -8,21 +8,31 @@
 
 #include "png.h"
 
-void png_encode(uint8_t* bytes, uint32_t wid, uint32_t hei, Buffer buf) {
-    uint8_t*  ptr       = NULL;
-    ptrdiff_t crc_begin = -1;
-    ptrdiff_t crc_end   = -1;
+void png_magic_header(Buffer buf) {
+    buf_write_bytes(buf, (uint8_t[]){137, 80, 78, 71, 13, 10, 26, 10}, 8);
+}
 
-    buf_write_bytes(buf, "\x89PNG\r\n\x1a\n", 8);
-
+void png_write_IHDR(Buffer buf, uint32_t wid, uint32_t hei) {
     buf_write_uint32_be(buf, 13);
-    crc_begin = buf_mark_pointer_w(buf);
+    ptrdiff_t crc_begin = buf_mark_pointer_w(buf);
     buf_write_bytes(buf, "IHDR", 4);
     buf_write_uint32_be(buf, wid);
     buf_write_uint32_be(buf, hei);
     buf_write_bytes(buf, "\x8\x6\x0\x0\x0", 5);
-    crc_end = buf_mark_pointer_w(buf);
+    ptrdiff_t crc_end = buf_mark_pointer_w(buf);
     buf_write_uint32_be(buf, crc32(buf_take_pointer(buf, crc_begin), crc_end - crc_begin));
+}
+
+void png_write_IEND(Buffer buf) {
+    buf_write_bytes(buf, "\x0\x0\x0\x0IEND\xae\x42\x60\x82", 12);
+}
+
+void png_encode(uint8_t* bytes, uint32_t wid, uint32_t hei, Buffer buf) {
+    ptrdiff_t crc_begin = -1;
+    ptrdiff_t crc_end   = -1;
+
+    png_magic_header(buf);
+    png_write_IHDR(buf, wid, hei);
 
     uint32_t  adler32     = 1;
     ptrdiff_t adler_begin = -1;
@@ -48,5 +58,5 @@ void png_encode(uint8_t* bytes, uint32_t wid, uint32_t hei, Buffer buf) {
     crc_end = buf_mark_pointer_w(buf);
     buf_write_uint32_be(buf, crc32(buf_take_pointer(buf, crc_begin), crc_end - crc_begin));
 
-    buf_write_bytes(buf, "\x0\x0\x0\x0IEND\xae\x42\x60\x82", 12);
+    png_write_IEND(buf);
 }

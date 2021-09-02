@@ -6,25 +6,25 @@
 
 #include "buf.h"
 
-typedef struct _Buf {
-    uint8_t*  bytes;
-    ptrdiff_t pointer_r;
-    ptrdiff_t pointer_w;
+typedef struct {
+    uint8_t*  pointer_raw_data;
+    ptrdiff_t pointer_offset_r;
+    ptrdiff_t pointer_offset_w;
     size_t    capacity;
-} Buf_, *Buf;
+} Buf, *BufPtr;
 
 typedef union {
     int16_t  sint16;
     uint16_t uint16;
-    uint8_t  int16_bytes[2];
+    uint8_t  int16_bytes[sizeof(uint16_t)];
 
     int32_t  sint32;
     uint32_t uint32;
-    uint8_t  int32_bytes[4];
+    uint8_t  int32_bytes[sizeof(uint32_t)];
 
     int64_t  sint64;
     uint64_t uint64;
-    uint8_t  int64_bytes[8];
+    uint8_t  int64_bytes[sizeof(uint64_t)];
 
     float   floatN;
     uint8_t floatN_bytes[sizeof(float)];
@@ -33,51 +33,49 @@ typedef union {
     uint8_t doubleN_bytes[sizeof(double)];
 } Number;
 
-void buf_create(Buffer* p_thiz, size_t capacity) {
-    Buf thiz = (Buf)malloc(sizeof(Buf_));
+void buf_create(Buffer* p_buffer, size_t capacity) {
+    BufPtr buf = (BufPtr)malloc(sizeof(Buf));
 
-    thiz->bytes     = (uint8_t*)malloc(capacity);
-    thiz->pointer_r = -1;
-    thiz->pointer_w = -1;
-    thiz->capacity  = capacity;
+    buf->capacity         = capacity;
+    buf->pointer_raw_data = (uint8_t*)malloc(buf->capacity);
+    buf->pointer_offset_r = -1;
+    buf->pointer_offset_w = -1;
 
-    (*p_thiz) = (Buffer)thiz;
+    (*p_buffer) = (Buffer)buf;
 }
 
-void buf_delete(Buffer* p_thiz) {
-    Buf thiz = (Buf)*p_thiz;
+void buf_delete(Buffer* p_buffer) {
+    BufPtr buf = (BufPtr)*p_buffer;
 
-    free(thiz->bytes);
-    free(thiz);
+    free(buf->pointer_raw_data);
+    free(buf);
 
-    *p_thiz = NULL;
+    *p_buffer = NULL;
 }
 
-size_t buf_len(Buffer thiz) {
-    return ((Buf)thiz)->pointer_w - ((Buf)thiz)->pointer_r;
+size_t buf_len(Buffer buffer) {
+    return ((BufPtr)buffer)->pointer_offset_w - ((BufPtr)buffer)->pointer_offset_r;
 }
 
-size_t buf_cap(Buffer thiz) {
-    return ((Buf)thiz)->capacity;
+size_t buf_cap(Buffer buffer) {
+    return ((BufPtr)buffer)->capacity;
 }
 
-ptrdiff_t buf_mark_pointer_w(Buffer thiz) {
-    return ((Buf)thiz)->pointer_w + 1;
+ptrdiff_t buf_mark_pointer_offset_w(Buffer thiz) {
+    return ((BufPtr)thiz)->pointer_offset_w + 1;
 }
-ptrdiff_t buf_mark_pointer_r(Buffer thiz) {
-    return ((Buf)thiz)->pointer_r + 1;
+ptrdiff_t buf_mark_pointer_offset_r(Buffer thiz) {
+    return ((BufPtr)thiz)->pointer_offset_r + 1;
 }
 
 uint8_t* buf_take_pointer(Buffer thiz, size_t skip) {
-    return ((Buf)thiz)->bytes + skip;
+    return ((BufPtr)thiz)->pointer_raw_data + skip;
 }
 
-static void buf_resize_cap(Buffer thiz, size_t count) {
-    Buf buf = (Buf)thiz;
-
-    if(buf->capacity <= buf->pointer_w + count) {
+static void buf_resize_cap(BufPtr buf, size_t count) {
+    if(buf->capacity <= buf->pointer_offset_w + count) {
         buf->capacity += count * 2;
-        buf->bytes = realloc(buf->bytes, buf->capacity);
+        buf->pointer_raw_data = realloc(buf->pointer_raw_data, buf->capacity);
     }
 }
 
@@ -89,241 +87,247 @@ static inline bool is_big_endian() {
     return 0xFF == checker.bytes[0];
 }
 
-void buf_write_bytes(Buffer thiz, uint8_t* bytes, size_t count) {
-    Buf buf = (Buf)thiz;
+void buf_write_bytes(Buffer buffer, uint8_t* bytes, size_t count) {
+    BufPtr buf = (BufPtr)buffer;
 
-    buf_resize_cap(thiz, count);
+    buf_resize_cap(buf, count);
 
-    for(size_t i = 0; i < count; ++i) { buf->bytes[++buf->pointer_w] = bytes[i]; }
+    for(size_t i = 0; i < count; ++i) { buf->pointer_raw_data[++buf->pointer_offset_w] = bytes[i]; }
 }
 
-void buf_write_bytes_reverse(Buffer thiz, uint8_t* bytes, size_t count) {
-    Buf buf = (Buf)thiz;
+void buf_write_bytes_reverse(Buffer buffer, uint8_t* bytes, size_t count) {
+    BufPtr buf = (BufPtr)buffer;
 
-    buf_resize_cap(thiz, count);
+    buf_resize_cap(buf, count);
 
-    buf->pointer_w += count;
+    buf->pointer_offset_w += count;
 
-    for(size_t i = 0; i < count; ++i) { buf->bytes[buf->pointer_w - i] = bytes[i]; }
+    for(size_t i = 0; i < count; ++i) { buf->pointer_raw_data[buf->pointer_offset_w - i] = bytes[i]; }
 }
 
-size_t buf_read_bytes(Buffer thiz, uint8_t* bytes, size_t count) {
-    Buf buf = (Buf)thiz;
+void buf_write_buffer(Buffer buffer_dst, Buffer buffer_src) {
+    BufPtr buf_src = (BufPtr)buffer_src;
 
-    count = buf_len(thiz) < count ? buf_len(thiz) : count;
+    buf_write_bytes(buffer_dst, buf_src->pointer_raw_data + buf_src->pointer_offset_r, buf_len(buffer_src));
+}
 
-    for(size_t i = 0; i < count; ++i) { bytes[i] = buf->bytes[++buf->pointer_r]; }
+size_t buf_read_bytes(Buffer buffer, uint8_t* bytes, size_t count) {
+    BufPtr buf = (BufPtr)buffer;
+
+    count = buf_len(buf) < count ? buf_len(buf) : count;
+
+    for(size_t i = 0; i < count; ++i) { bytes[i] = buf->pointer_raw_data[++buf->pointer_offset_r]; }
 
     return count;
 }
 
-size_t buf_read_bytes_reverse(Buffer thiz, uint8_t* bytes, size_t count) {
-    Buf buf = (Buf)thiz;
+size_t buf_read_bytes_reverse(Buffer buffer, uint8_t* bytes, size_t count) {
+    BufPtr buf = (BufPtr)buffer;
 
-    count = buf_len(thiz) < count ? buf_len(thiz) : count;
+    count = buf_len(buffer) < count ? buf_len(buffer) : count;
 
-    buf->pointer_r += count;
+    buf->pointer_offset_r += count;
 
-    for(size_t i = 0; i < count; ++i) { bytes[i] = buf->bytes[buf->pointer_r - i]; }
+    for(size_t i = 0; i < count; ++i) { bytes[i] = buf->pointer_raw_data[buf->pointer_offset_r - i]; }
 
     return count;
 }
 
-void buf_write_uint8(Buffer thiz, uint8_t value) {
-    buf_write_bytes(thiz, &value, 1);
+void buf_write_uint8(Buffer buffer, uint8_t value) {
+    buf_write_bytes(buffer, &value, 1);
 }
 
-uint8_t buf_read_uint8(Buffer thiz) {
+uint8_t buf_read_uint8(Buffer buffer) {
     uint8_t value;
-    buf_read_bytes(thiz, &value, 1);
+    buf_read_bytes(buffer, &value, 1);
     return value;
 }
 
-void buf_write_uint16_be(Buffer thiz, uint16_t value) {
+void buf_write_uint16_be(Buffer buffer, uint16_t value) {
     Number number = {uint16: value};
     if(is_big_endian()) {
-        buf_write_bytes(thiz, number.int16_bytes, 2);
+        buf_write_bytes(buffer, number.int16_bytes, sizeof(uint16_t));
     } else {
-        buf_write_bytes_reverse(thiz, number.int16_bytes, 2);
+        buf_write_bytes_reverse(buffer, number.int16_bytes, sizeof(uint16_t));
     }
 }
 
-uint16_t buf_read_uint16_be(Buffer thiz) {
+uint16_t buf_read_uint16_be(Buffer buffer) {
     Number number;
     if(is_big_endian()) {
-        buf_read_bytes(thiz, number.int16_bytes, 2);
+        buf_read_bytes(buffer, number.int16_bytes, sizeof(uint16_t));
     } else {
-        buf_read_bytes_reverse(thiz, number.int16_bytes, 2);
+        buf_read_bytes_reverse(buffer, number.int16_bytes, sizeof(uint16_t));
     }
     return number.uint16;
 }
 
-void buf_write_uint16_le(Buffer thiz, uint16_t value) {
+void buf_write_uint16_le(Buffer buffer, uint16_t value) {
     Number number = {uint16: value};
     if(is_big_endian()) {
-        buf_write_bytes_reverse(thiz, number.int16_bytes, 2);
+        buf_write_bytes_reverse(buffer, number.int16_bytes, sizeof(uint16_t));
     } else {
-        buf_write_bytes(thiz, number.int16_bytes, 2);
+        buf_write_bytes(buffer, number.int16_bytes, sizeof(uint16_t));
     }
 }
 
-uint16_t buf_read_uint16_le(Buffer thiz) {
+uint16_t buf_read_uint16_le(Buffer buffer) {
     Number number;
     if(is_big_endian()) {
-        buf_read_bytes_reverse(thiz, number.int16_bytes, 2);
+        buf_read_bytes_reverse(buffer, number.int16_bytes, sizeof(uint16_t));
     } else {
-        buf_read_bytes(thiz, number.int16_bytes, 2);
+        buf_read_bytes(buffer, number.int16_bytes, sizeof(uint16_t));
     }
     return number.uint16;
 }
 
-void buf_write_uint32_be(Buffer thiz, uint32_t value) {
+void buf_write_uint32_be(Buffer buffer, uint32_t value) {
     Number number = {uint32: value};
     if(is_big_endian()) {
-        buf_write_bytes(thiz, number.int32_bytes, 4);
+        buf_write_bytes(buffer, number.int32_bytes, sizeof(uint32_t));
     } else {
-        buf_write_bytes_reverse(thiz, number.int32_bytes, 4);
+        buf_write_bytes_reverse(buffer, number.int32_bytes, sizeof(uint32_t));
     }
 }
 
-uint32_t buf_read_uint32_be(Buffer thiz) {
+uint32_t buf_read_uint32_be(Buffer buffer) {
     Number number;
     if(is_big_endian()) {
-        buf_read_bytes(thiz, number.int32_bytes, 4);
+        buf_read_bytes(buffer, number.int32_bytes, sizeof(uint32_t));
     } else {
-        buf_read_bytes_reverse(thiz, number.int32_bytes, 4);
+        buf_read_bytes_reverse(buffer, number.int32_bytes, sizeof(uint32_t));
     }
     return number.uint32;
 }
 
-void buf_write_uint32_le(Buffer thiz, uint32_t value) {
+void buf_write_uint32_le(Buffer buffer, uint32_t value) {
     Number number = {uint32: value};
     if(is_big_endian()) {
-        buf_write_bytes_reverse(thiz, number.int32_bytes, 4);
+        buf_write_bytes_reverse(buffer, number.int32_bytes, sizeof(uint32_t));
     } else {
-        buf_write_bytes(thiz, number.int32_bytes, 4);
+        buf_write_bytes(buffer, number.int32_bytes, sizeof(uint32_t));
     }
 }
 
-uint32_t buf_read_uint32_le(Buffer thiz) {
+uint32_t buf_read_uint32_le(Buffer buffer) {
     Number number;
     if(is_big_endian()) {
-        buf_read_bytes_reverse(thiz, number.int32_bytes, 4);
+        buf_read_bytes_reverse(buffer, number.int32_bytes, sizeof(uint32_t));
     } else {
-        buf_read_bytes(thiz, number.int32_bytes, 4);
+        buf_read_bytes(buffer, number.int32_bytes, sizeof(uint32_t));
     }
     return number.uint32;
 }
 
-void buf_write_uint64_be(Buffer thiz, uint64_t value) {
+void buf_write_uint64_be(Buffer buffer, uint64_t value) {
     Number number = {uint64: value};
     if(is_big_endian()) {
-        buf_write_bytes(thiz, number.int64_bytes, 8);
+        buf_write_bytes(buffer, number.int64_bytes, sizeof(uint64_t));
     } else {
-        buf_write_bytes_reverse(thiz, number.int64_bytes, 8);
+        buf_write_bytes_reverse(buffer, number.int64_bytes, sizeof(uint64_t));
     }
 }
 
-uint64_t buf_read_uint64_be(Buffer thiz) {
+uint64_t buf_read_uint64_be(Buffer buffer) {
     Number number;
     if(is_big_endian()) {
-        buf_read_bytes(thiz, number.int64_bytes, 8);
+        buf_read_bytes(buffer, number.int64_bytes, sizeof(uint64_t));
     } else {
-        buf_read_bytes_reverse(thiz, number.int64_bytes, 8);
+        buf_read_bytes_reverse(buffer, number.int64_bytes, sizeof(uint64_t));
     }
     return number.uint64;
 }
 
-void buf_write_uint64_le(Buffer thiz, uint64_t value) {
+void buf_write_uint64_le(Buffer buffer, uint64_t value) {
     Number number = {uint64: value};
     if(is_big_endian()) {
-        buf_write_bytes_reverse(thiz, number.int64_bytes, 8);
+        buf_write_bytes_reverse(buffer, number.int64_bytes, sizeof(uint64_t));
     } else {
-        buf_write_bytes(thiz, number.int64_bytes, 8);
+        buf_write_bytes(buffer, number.int64_bytes, sizeof(uint64_t));
     }
 }
-uint64_t buf_read_uint64_le(Buffer thiz) {
+uint64_t buf_read_uint64_le(Buffer buffer) {
     Number number;
     if(is_big_endian()) {
-        buf_read_bytes_reverse(thiz, number.int64_bytes, 8);
+        buf_read_bytes_reverse(buffer, number.int64_bytes, sizeof(uint64_t));
     } else {
-        buf_read_bytes(thiz, number.int64_bytes, 8);
+        buf_read_bytes(buffer, number.int64_bytes, sizeof(uint64_t));
     }
     return number.uint64;
 }
 
-void buf_write_float_be(Buffer thiz, float value) {
+void buf_write_float_be(Buffer buffer, float value) {
     Number number = {floatN: value};
     if(is_big_endian()) {
-        buf_write_bytes(thiz, number.floatN_bytes, sizeof(float));
+        buf_write_bytes(buffer, number.floatN_bytes, sizeof(float));
     } else {
-        buf_write_bytes_reverse(thiz, number.floatN_bytes, sizeof(float));
+        buf_write_bytes_reverse(buffer, number.floatN_bytes, sizeof(float));
     }
 }
 
-float buf_read_float_be(Buffer thiz) {
+float buf_read_float_be(Buffer buffer) {
     Number number;
     if(is_big_endian()) {
-        buf_read_bytes(thiz, number.floatN_bytes, sizeof(float));
+        buf_read_bytes(buffer, number.floatN_bytes, sizeof(float));
     } else {
-        buf_read_bytes_reverse(thiz, number.floatN_bytes, sizeof(float));
+        buf_read_bytes_reverse(buffer, number.floatN_bytes, sizeof(float));
     }
     return number.floatN;
 }
 
-void buf_write_float_le(Buffer thiz, float value) {
+void buf_write_float_le(Buffer buffer, float value) {
     Number number = {floatN: value};
     if(is_big_endian()) {
-        buf_write_bytes_reverse(thiz, number.floatN_bytes, sizeof(float));
+        buf_write_bytes_reverse(buffer, number.floatN_bytes, sizeof(float));
     } else {
-        buf_write_bytes(thiz, number.floatN_bytes, sizeof(float));
+        buf_write_bytes(buffer, number.floatN_bytes, sizeof(float));
     }
 }
 
-float buf_read_float_le(Buffer thiz) {
+float buf_read_float_le(Buffer buffer) {
     Number number;
     if(is_big_endian()) {
-        buf_read_bytes_reverse(thiz, number.floatN_bytes, sizeof(float));
+        buf_read_bytes_reverse(buffer, number.floatN_bytes, sizeof(float));
     } else {
-        buf_read_bytes(thiz, number.floatN_bytes, sizeof(float));
+        buf_read_bytes(buffer, number.floatN_bytes, sizeof(float));
     }
     return number.floatN;
 }
 
-void buf_write_double_be(Buffer thiz, double value) {
+void buf_write_double_be(Buffer buffer, double value) {
     Number number = {doubleN: value};
     if(is_big_endian()) {
-        buf_write_bytes(thiz, number.doubleN_bytes, sizeof(double));
+        buf_write_bytes(buffer, number.doubleN_bytes, sizeof(double));
     } else {
-        buf_write_bytes_reverse(thiz, number.doubleN_bytes, sizeof(double));
+        buf_write_bytes_reverse(buffer, number.doubleN_bytes, sizeof(double));
     }
 }
 
-double buf_read_double_be(Buffer thiz) {
+double buf_read_double_be(Buffer buffer) {
     Number number;
     if(is_big_endian()) {
-        buf_read_bytes(thiz, number.doubleN_bytes, sizeof(double));
+        buf_read_bytes(buffer, number.doubleN_bytes, sizeof(double));
     } else {
-        buf_read_bytes_reverse(thiz, number.doubleN_bytes, sizeof(double));
+        buf_read_bytes_reverse(buffer, number.doubleN_bytes, sizeof(double));
     }
     return number.doubleN;
 }
 
-void buf_write_double_le(Buffer thiz, double value) {
+void buf_write_double_le(Buffer buffer, double value) {
     Number number = {doubleN: value};
     if(is_big_endian()) {
-        buf_write_bytes_reverse(thiz, number.doubleN_bytes, sizeof(double));
+        buf_write_bytes_reverse(buffer, number.doubleN_bytes, sizeof(double));
     } else {
-        buf_write_bytes(thiz, number.doubleN_bytes, sizeof(double));
+        buf_write_bytes(buffer, number.doubleN_bytes, sizeof(double));
     }
 }
 
-double buf_read_double_le(Buffer thiz) {
+double buf_read_double_le(Buffer buffer) {
     Number number;
     if(is_big_endian()) {
-        buf_read_bytes_reverse(thiz, number.doubleN_bytes, sizeof(double));
+        buf_read_bytes_reverse(buffer, number.doubleN_bytes, sizeof(double));
     } else {
-        buf_read_bytes(thiz, number.doubleN_bytes, sizeof(double));
+        buf_read_bytes(buffer, number.doubleN_bytes, sizeof(double));
     }
     return number.doubleN;
 }

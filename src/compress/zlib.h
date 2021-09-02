@@ -1,28 +1,45 @@
 #ifndef ZLIB_H
 #define ZLIB_h
 
-typedef struct _ZLib {
+typedef enum {
+    zlib_cm_default = 0x08,
+} ZLibCM;
+
+typedef enum {
+    zlib_cinfo_default = 0x07,
+} ZLibCINFO;
+
+typedef enum {
+    zlib_level_fastest = 0b00, // compressor used fastest algorithm
+    zlib_level_fast    = 0b01, // compressor used fast algorithm
+    zlib_level_default = 0b10, // compressor used default algorithm
+    zlib_level_best    = 0b11, // compressor used maximum compression, slowest algorithm
+} ZLibFLEVEL;
+
+typedef enum {
+    zlib_dict_no  = 0b0,
+    zlib_dict_yes = 0b1,
+} ZLibFDICT;
+
+typedef struct {
     union {
         uint8_t cmf;
         struct {
-            uint8_t cinfo : 4;
-            uint8_t cm : 4;
+            ZLibCINFO cinfo : 4;
+            ZLibCM    cm : 4;
         };
     };
     union {
         uint8_t flg;
         struct {
-            uint8_t flevel : 2;
-            uint8_t fdict : 1;
-            uint8_t fcheck : 5;
+            ZLibFLEVEL flevel : 2;
+            ZLibFDICT  fdict : 1;
+            uint8_t    fcheck : 5;
         };
     };
-    uint32_t dictid;
-    uint8_t* compressed_data;
-    uint32_t adler32;
-} ZLib_, *ZLib;
+} ZLibHeader;
 
-void zlib_create(ZLib* p_thiz);
-void zlib_delete(ZLib* p_thiz);
-
+void zlib_buf_create(Buffer* p_thiz, ZLibCINFO cinfo, ZLibCM cm, ZLibFLEVEL flevel, ZLibFDICT fdict, uint32_t dictid);
+void zlib_buf_delete(Buffer* p_thiz);
+void zlib_buf_write_compressed_data(Buffer zip_buffer, Buffer dat_buffer);
 #endif
