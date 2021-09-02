@@ -19,7 +19,7 @@
 #define free test_free
 #endif
 
-#include "list_doubly_linked.h"
+#include "container/list_doubly_linked.h"
 
 int main(int argc, char** argv) {
     return EXIT_SUCCESS;

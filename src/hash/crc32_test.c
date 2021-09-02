@@ -11,7 +11,7 @@
 
 #include <cmocka.h>
 
-#include "crc32.h"
+#include "hash/crc32.h"
 
 #define UNIT_TESTINT
 

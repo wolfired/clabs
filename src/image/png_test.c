@@ -11,8 +11,8 @@
 
 #include <cmocka.h>
 
-#include "buf.h"
-#include "png.h"
+#include "bufio/buf.h"
+#include "image/png.h"
 
 #define UNIT_TESTINT
 

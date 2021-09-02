@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "adler32.h"
+#include "hash/adler32.h"
 
 inline void adler32_update_byte(uint32_t* p_adler, uint8_t byte) {
     uint32_t lo = *p_adler & 0xffff;

@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "linear_algebra.h"
+#include "math/linear_algebra.h"
 
 struct _Matf {
     /* data */

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "mark_sweep.h"
+#include "gc/mark_sweep.h"
 
 #define BLOCK_HEAD_SIZE (sizeof(size_t) + sizeof(size_t))
 #define POINTER_SIZE (sizeof(uintptr_t))

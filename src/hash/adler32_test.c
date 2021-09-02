@@ -11,7 +11,7 @@
 
 #include <cmocka.h>
 
-#include "adler32.h"
+#include "hash/adler32.h"
 
 #define UNIT_TESTINT
 

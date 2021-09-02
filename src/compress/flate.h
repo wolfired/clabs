@@ -13,6 +13,6 @@ typedef enum {
     deflate_final_yes = 0b1,
 } BFINAL;
 
-void deflate_block(BFINAL is_final, BTYPE type, Buffer compress, Buffer compressed);
+void deflate_write_block(BFINAL is_final, BTYPE type, Buffer buffer_uncompress, Buffer buffer_compressed);
 
 #endif

@@ -11,7 +11,7 @@
 
 #include <cmocka.h>
 
-#include "buf.h"
+#include "bufio/buf.h"
 
 #define UNIT_TESTINT
 

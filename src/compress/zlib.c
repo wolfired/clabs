@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "adler32.h"
-#include "buf.h"
-#include "zlib.h"
+#include "hash/adler32.h"
+#include "bufio/buf.h"
+#include "compress/zlib.h"
 
 void zlib_buf_create(Buffer* p_buffer, ZLibCINFO cinfo, ZLibCM cm, ZLibFLEVEL flevel, ZLibFDICT fdict, uint32_t dictid) {
     buf_create(p_buffer, 0);
@@ -26,4 +26,6 @@ void zlib_buf_delete(Buffer* p_buffer) {
     buf_delete(p_buffer);
 }
 
-void zlib_buf_write_compressed_data(Buffer zip_buffer, Buffer dat_buffer) {}
+void zlib_buf_write_compressed_data(Buffer buffer_zlib, Buffer buffer_compressed) {
+
+}

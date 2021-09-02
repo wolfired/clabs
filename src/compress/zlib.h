@@ -41,5 +41,5 @@ typedef struct {
 
 void zlib_buf_create(Buffer* p_thiz, ZLibCINFO cinfo, ZLibCM cm, ZLibFLEVEL flevel, ZLibFDICT fdict, uint32_t dictid);
 void zlib_buf_delete(Buffer* p_thiz);
-void zlib_buf_write_compressed_data(Buffer zip_buffer, Buffer dat_buffer);
+void zlib_buf_write_compressed_data(Buffer buffer_zlib, Buffer buffer_compressed);
 #endif
