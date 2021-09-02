@@ -24,29 +24,35 @@
 #endif
 
 static void test_png(void** state) {
-    // uint8_t* png = malloc(2 * 2 * 4);
-    // for(size_t i = 0; i < 4; i++) {
-    //     png[i * 4 + 0] = 0xff;
-    //     png[i * 4 + 1] = 0x0;
-    //     png[i * 4 + 2] = 0x0;
-    //     png[i * 4 + 3] = 0xff;
-    // }
+    // clang-format off
+    uint8_t pixel_bytes[] = {
+        0xff,0x00,0x00,0xff,
+        0x00,0xff,0x00,0xff,
+        0x00,0x00,0xff,0xff,
+        0xff,0xff,0xff,0xff,
+        // 0xff,0x00,0x00,0xff,
+        // 0xff,0x00,0x00,0xff,
+        // 0xff,0x00,0x00,0xff,
+        // 0xff,0x00,0x00,0xff,
+    };
+    // clang-format on
 
-    // Buffer buf = NULL;
-    // buf_create(&buf, 1024);
+    Buffer buffer_png = NULL;
+    buf_create(&buffer_png, 1024);
 
-    // png_encode(png, 2, 2, buf);
+    png_encode_pixel_bytes(buffer_png, 2, 2, pixel_bytes);
 
-    // uint8_t* p = buf_take_pointer(buf, 0);
-    // size_t   l = buf_len(buf);
+    uint8_t* p = buf_take_pointer(buffer_png, 0);
+    size_t   l = buf_len(buffer_png);
     // for(size_t i = 0; i < l; ++i) { printf("%02x ", p[i]); }
 
-    // FILE* file = fopen("./a.png", "wb");
+    FILE* file = fopen("./a.png", "wb");
 
-    // fwrite(p, 1, buf_len(buf), file);
+    fwrite(p, buf_len(buffer_png), 1, file);
 
-    // fclose(file);
-    // free(png);
+    fclose(file);
+
+    buf_delete(&buffer_png);
 }
 
 int main(int argc, char** argv) {

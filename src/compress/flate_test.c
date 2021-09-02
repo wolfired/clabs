@@ -30,7 +30,7 @@ static void test_deflate_write_block_0(void** state) {
     Buffer buffer_compressed = NULL;
     buf_create(&buffer_compressed, 0);
 
-    deflate_write_block(deflate_final_yes, deflate_type_no, buffer_uncompress, buffer_compressed);
+    deflate_write_buffer(deflate_final_yes, deflate_type_no, buffer_uncompress, buffer_compressed);
     assert_int_equal(5, buf_len(buffer_compressed));
 
     uint8_t  bytes[] = {1, 0, 0, 255, 255};
@@ -47,7 +47,7 @@ static void test_deflate_write_block_1(void** state) {
     Buffer buffer_compressed = NULL;
     buf_create(&buffer_compressed, 0);
 
-    deflate_write_block(deflate_final_yes, deflate_type_no, buffer_uncompress, buffer_compressed);
+    deflate_write_buffer(deflate_final_yes, deflate_type_no, buffer_uncompress, buffer_compressed);
     assert_int_equal(5, buf_len(buffer_compressed));
 
     uint8_t  bytes[] = {1, 0, 0, 255, 255};

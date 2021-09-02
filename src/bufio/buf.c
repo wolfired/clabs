@@ -53,6 +53,10 @@ void buf_delete(Buffer* p_buffer) {
     *p_buffer = NULL;
 }
 
+void buf_reset(Buffer buffer) {
+    ((BufPtr)buffer)->pointer_offset_r = ((BufPtr)buffer)->pointer_offset_w = -1;
+}
+
 size_t buf_len(Buffer buffer) {
     return ((BufPtr)buffer)->pointer_offset_w - ((BufPtr)buffer)->pointer_offset_r;
 }
@@ -108,7 +112,7 @@ void buf_write_bytes_reverse(Buffer buffer, uint8_t* bytes, size_t count) {
 void buf_write_buffer(Buffer buffer_dst, Buffer buffer_src) {
     BufPtr buf_src = (BufPtr)buffer_src;
 
-    buf_write_bytes(buffer_dst, buf_src->pointer_raw_data + buf_src->pointer_offset_r, buf_len(buffer_src));
+    buf_write_bytes(buffer_dst, buf_src->pointer_raw_data + buf_src->pointer_offset_r + 1, buf_len(buffer_src));
 }
 
 size_t buf_read_bytes(Buffer buffer, uint8_t* bytes, size_t count) {

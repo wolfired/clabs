@@ -6,11 +6,12 @@ typedef void* Buffer;
 void buf_create(Buffer* p_buffer, size_t capacity);
 void buf_delete(Buffer* p_buffer);
 
+void buf_reset(Buffer buffer);
 size_t buf_len(Buffer buffer);
 size_t buf_cap(Buffer buffer);
 
-ptrdiff_t buf_mark_pointer_w(Buffer thiz);
-ptrdiff_t buf_mark_pointer_r(Buffer thiz);
+ptrdiff_t buf_mark_pointer_offset_w(Buffer thiz);
+ptrdiff_t buf_mark_pointer_offset_r(Buffer thiz);
 uint8_t*  buf_take_pointer(Buffer thiz, size_t skip);
 
 void buf_write_bytes(Buffer buffer, uint8_t* bytes, size_t count);
