@@ -7,6 +7,7 @@ add_subdirectory(image)
 set(
     INCS
     bufio/buf.h
+    cg/line.h
     compress/flate.h
     compress/zlib.h
     container/list.h
@@ -21,6 +22,7 @@ set(
 set(
     SRCS
     bufio/buf.c
+    cg/line.c
     compress/flate.c
     compress/zlib.c
     container/list_singly_linked.c
