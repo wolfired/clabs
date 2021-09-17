@@ -3,36 +3,40 @@
 
 #include "line.h"
 
-inline void standardize(int32_t* x0, int32_t* y0, int32_t* x1, int32_t* y1, bool* steep, bool* flip) {
+void standardize(int32_t* x0, int32_t* y0, int32_t* x1, int32_t* y1, bool* steep, bool* flip_x) {
     *steep = (*x1 > *x0 ? *x1 - *x0 : *x0 - *x1) < (*y1 > *y0 ? *y1 - *y0 : *y0 - *y1);
 
-    if(*steep) {
+    if (*steep) {
         *x0 ^= *y0, *y0 ^= *x0, *x0 ^= *y0;
         *x1 ^= *y1, *y1 ^= *x1, *x1 ^= *y1;
     }
 
-    if(*x0 > *x1) {
+    *flip_x = *y0 > *y1;
+
+    if (*flip_x) {
+        *x0 = (*x1 << 1) - *x0;
+    }
+
+    if (*x0 > *x1) {
         *x0 ^= *x1, *x1 ^= *x0, *x0 ^= *x1;
         *y0 ^= *y1, *y1 ^= *y0, *y0 ^= *y1;
     }
-
-    *flip = *y0 > *y1;
-
-    if(*flip) { *y1 = (*y0 << 1) - *y1; }
 }
 
 void line_dda(int32_t x0, int32_t y0, int32_t x1, int32_t y1, line_stepper stepper, void* voidargs) {
-    bool steep = false, flip = false;
-    standardize(&x0, &y0, &x1, &y1, &steep, &flip);
+    bool steep = false, flip_x = false;
+    standardize(&x0, &y0, &x1, &y1, &steep, &flip_x);
 
-    float k = (flip ? -1 : 1) * (0. + y1 - y0) / (0. + x1 - x0);
+    int32_t x0x0 = x0 << 1;
+
+    float k = (0. + y1 - y0) / (0. + x1 - x0);
     float y = 0. + y0;
 
-    for(int32_t x = x0; x <= x1; ++x) {
-        if(steep) {
-            stepper(voidargs, (int32_t)(y + .5), x);
+    for (int32_t x = x0; x <= x1; ++x) {
+        if (steep) {
+            stepper(voidargs, (int32_t)(y + .5), flip_x ? x0x0 - x : x);
         } else {
-            stepper(voidargs, x, (int32_t)(y + .5));
+            stepper(voidargs, flip_x ? x0x0 - x : x, (int32_t)(y + .5));
         }
         y += k;
     }
@@ -87,25 +91,25 @@ dmm = F(Xmm, Ymm) = a * (Xi + 2) + b * (Yi + 1.5) + c = a * Xi + b * Yi + c + 2a
 
 */
 void line_midpoint(int32_t x0, int32_t y0, int32_t x1, int32_t y1, line_stepper stepper, void* voidargs) {
-    bool steep = false, flip = false;
-    standardize(&x0, &y0, &x1, &y1, &steep, &flip);
+    bool steep = false, flip_x = false;
+    standardize(&x0, &y0, &x1, &y1, &steep, &flip_x);
 
-    int32_t y0y0 = y0 << 1;
+    int32_t x0x0 = x0 << 1;
 
-    int32_t a  = y1 - y0;
+    int32_t a = y1 - y0;
     int32_t aa = a << 1;
-    int32_t b  = x0 - x1;
+    int32_t b = x0 - x1;
     int32_t bb = b << 1;
 
     int32_t dd = aa + b;
 
-    for(int32_t x = x0, y = y0; x <= x1; ++x) {
-        if(steep) {
-            stepper(voidargs, flip ? y0y0 - y : y, x);
+    for (int32_t x = x0, y = y0; x <= x1; ++x) {
+        if (steep) {
+            stepper(voidargs, y, flip_x ? x0x0 - x : x);
         } else {
-            stepper(voidargs, x, flip ? y0y0 - y : y);
+            stepper(voidargs, flip_x ? x0x0 - x : x, y);
         }
-        if(0 > dd) {
+        if (0 > dd) {
             dd += aa;
         } else {
             ++y;
@@ -115,26 +119,26 @@ void line_midpoint(int32_t x0, int32_t y0, int32_t x1, int32_t y1, line_stepper 
 }
 
 void line_bresenham(int32_t x0, int32_t y0, int32_t x1, int32_t y1, line_stepper stepper, void* voidargs) {
-    bool steep = false, flip = false;
-    standardize(&x0, &y0, &x1, &y1, &steep, &flip);
+    bool steep = false, flip_x = false;
+    standardize(&x0, &y0, &x1, &y1, &steep, &flip_x);
 
-    int32_t y0y0 = y0 << 1;
+    int32_t x0x0 = x0 << 1;
 
-    int32_t a  = y1 - y0;
+    int32_t a = y1 - y0;
     int32_t aa = a << 1;
-    int32_t b  = x0 - x1;
+    int32_t b = x0 - x1;
     int32_t bb = b << 1;
 
     int32_t ee = b;
 
-    for(int32_t x = x0, y = y0; x <= x1; ++x) {
-        if(steep) {
-            stepper(voidargs, flip ? y0y0 - y : y, x);
+    for (int32_t x = x0, y = y0; x <= x1; ++x) {
+        if (steep) {
+            stepper(voidargs, y, flip_x ? x0x0 - x : x);
         } else {
-            stepper(voidargs, x, flip ? y0y0 - y : y);
+            stepper(voidargs, flip_x ? x0x0 - x : x, y);
         }
         ee += aa;
-        if(0 <= ee) {
+        if (0 <= ee) {
             ++y;
             ee += bb;
         }
