@@ -10,10 +10,11 @@
 #include <string.h>
 #include <time.h>
 
+#include "bufio/buf.h"
+#include "image/png.h"
+
 #include "line.h"
 #include "triangle.h"
-
-#include "svpng.inc"
 
 typedef struct _PixelImage {
     size_t wid;
@@ -71,9 +72,19 @@ void destory(PixelImage* hold) {
 }
 
 void save2png(PixelImage img, const char* filename) {
+    Buffer buffer_png = NULL;
+    buf_create(&buffer_png, 1024);
+
+    png_encode_pixel_bytes(buffer_png, img->wid * img->size, img->hei * img->size, img->bytes);
+
+    uint8_t* p = buf_take_pointer(buffer_png, 0);
+
     FILE* file = fopen(filename, "wb");
-    svpng(file, img->wid * img->size, img->hei * img->size, img->bytes, 1);
+    fwrite(p, buf_len(buffer_png), 1, file);
+
     fclose(file);
+
+    buf_delete(&buffer_png);
 }
 
 inline void pixelimage_point_stepper(void* voidargs, int32_t x, int32_t y) { set_grid_color((PixelImage)voidargs, x, y); }
