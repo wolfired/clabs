@@ -88,7 +88,7 @@ void save2png(PixelImage img, const char* filename) {
     buf_delete(&buffer_png);
 }
 
-inline void pixelimage_point_stepper(void* voidargs, int32_t x, int32_t y) { set_grid_color((PixelImage)voidargs, x, y); }
+ static inline void pixelimage_point_stepper(void* voidargs, int32_t x, int32_t y) { set_grid_color((PixelImage)voidargs, x, y); }
 
 void line_grid(PixelImage img, int32_t x0, int32_t y0, int32_t x1, int32_t y1) { line_bresenham(x0, y0, x1, y1, pixelimage_point_stepper, img); }
 
