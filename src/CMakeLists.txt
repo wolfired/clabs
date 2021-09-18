@@ -4,6 +4,7 @@ add_subdirectory(compress)
 add_subdirectory(container)
 add_subdirectory(hash)
 add_subdirectory(image)
+add_subdirectory(math)
 
 set(
     INCS

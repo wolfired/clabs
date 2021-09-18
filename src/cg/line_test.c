@@ -14,8 +14,8 @@
 #include "bufio/buf.h"
 #include "image/png.h"
 
-#include "line.h"
-#include "triangle.h"
+#include "cg/line.h"
+#include "cg/triangle.h"
 
 typedef struct _PixelImage {
     size_t wid;
