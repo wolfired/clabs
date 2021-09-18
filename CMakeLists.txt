@@ -4,10 +4,11 @@ project(clabs VERSION 0.0.1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ./cmake/modules)
 
-include(codecov)
-include(ep_cmocka)
-
-enable_testing()
+if (NOT MSVC)
+    include(codecov)
+    include(ep_cmocka)
+    enable_testing()
+endif()
 
 find_program(PROGRAM_CCACHE ccache)
 if(PROGRAM_CCACHE)

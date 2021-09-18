@@ -1,4 +1,5 @@
 add_subdirectory(bufio)
+add_subdirectory(cg)
 add_subdirectory(compress)
 add_subdirectory(container)
 add_subdirectory(hash)
@@ -8,6 +9,7 @@ set(
     INCS
     bufio/buf.h
     cg/line.h
+    cg/triangle.h
     compress/flate.h
     compress/zlib.h
     container/list.h
@@ -23,6 +25,7 @@ set(
     SRCS
     bufio/buf.c
     cg/line.c
+    cg/triangle.c
     compress/flate.c
     compress/zlib.c
     container/list_singly_linked.c

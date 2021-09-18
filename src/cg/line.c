@@ -3,7 +3,7 @@
 
 #include "line.h"
 
-void standardize(int32_t* x0, int32_t* y0, int32_t* x1, int32_t* y1, bool* steep, bool* flip_x) {
+static void standardize(int32_t* x0, int32_t* y0, int32_t* x1, int32_t* y1, bool* steep, bool* flip_x) {
     *steep = (*x1 > *x0 ? *x1 - *x0 : *x0 - *x1) < (*y1 > *y0 ? *y1 - *y0 : *y0 - *y1);
 
     if (*steep) {
@@ -23,7 +23,7 @@ void standardize(int32_t* x0, int32_t* y0, int32_t* x1, int32_t* y1, bool* steep
     }
 }
 
-void line_dda(int32_t x0, int32_t y0, int32_t x1, int32_t y1, line_stepper stepper, void* voidargs) {
+void line_dda(int32_t x0, int32_t y0, int32_t x1, int32_t y1, point_stepper stepper, void* voidargs) {
     bool steep = false, flip_x = false;
     standardize(&x0, &y0, &x1, &y1, &steep, &flip_x);
 
@@ -90,7 +90,7 @@ dmm = F(Xmm, Ym) = a * (Xi + 2) + b * (Yi + .5) + c = a * Xi + b * Yi + c + 2a +
 dmm = F(Xmm, Ymm) = a * (Xi + 2) + b * (Yi + 1.5) + c = a * Xi + b * Yi + c + 2a + 1.5 * b = di + 2a + 1.5 * b = dm + a + b
 
 */
-void line_midpoint(int32_t x0, int32_t y0, int32_t x1, int32_t y1, line_stepper stepper, void* voidargs) {
+void line_midpoint(int32_t x0, int32_t y0, int32_t x1, int32_t y1, point_stepper stepper, void* voidargs) {
     bool steep = false, flip_x = false;
     standardize(&x0, &y0, &x1, &y1, &steep, &flip_x);
 
@@ -118,7 +118,7 @@ void line_midpoint(int32_t x0, int32_t y0, int32_t x1, int32_t y1, line_stepper 
     }
 }
 
-void line_bresenham(int32_t x0, int32_t y0, int32_t x1, int32_t y1, line_stepper stepper, void* voidargs) {
+void line_bresenham(int32_t x0, int32_t y0, int32_t x1, int32_t y1, point_stepper stepper, void* voidargs) {
     bool steep = false, flip_x = false;
     standardize(&x0, &y0, &x1, &y1, &steep, &flip_x);
 

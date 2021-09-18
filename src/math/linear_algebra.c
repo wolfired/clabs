@@ -5,6 +5,7 @@
 
 struct _Matf {
     /* data */
+    int a;
 } Matf_, *Matf;
 
 // void matrix_addf(Matrix left, Matrix right, size_t row, size_t col) {

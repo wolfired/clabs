@@ -87,7 +87,7 @@ static inline bool is_big_endian() {
     static union {
         uint16_t value;
         uint8_t  bytes[2];
-    } checker = {value: 0xFF00};
+    } checker = {.value = 0xFF00};
     return 0xFF == checker.bytes[0];
 }
 
@@ -148,7 +148,7 @@ uint8_t buf_read_uint8(Buffer buffer) {
 }
 
 void buf_write_uint16_be(Buffer buffer, uint16_t value) {
-    Number number = {uint16: value};
+    Number number = {.uint16 = value};
     if(is_big_endian()) {
         buf_write_bytes(buffer, number.int16_bytes, sizeof(uint16_t));
     } else {
@@ -167,7 +167,7 @@ uint16_t buf_read_uint16_be(Buffer buffer) {
 }
 
 void buf_write_uint16_le(Buffer buffer, uint16_t value) {
-    Number number = {uint16: value};
+    Number number = {.uint16 = value};
     if(is_big_endian()) {
         buf_write_bytes_reverse(buffer, number.int16_bytes, sizeof(uint16_t));
     } else {
@@ -186,7 +186,7 @@ uint16_t buf_read_uint16_le(Buffer buffer) {
 }
 
 void buf_write_uint32_be(Buffer buffer, uint32_t value) {
-    Number number = {uint32: value};
+    Number number = {.uint32 = value};
     if(is_big_endian()) {
         buf_write_bytes(buffer, number.int32_bytes, sizeof(uint32_t));
     } else {
@@ -205,7 +205,7 @@ uint32_t buf_read_uint32_be(Buffer buffer) {
 }
 
 void buf_write_uint32_le(Buffer buffer, uint32_t value) {
-    Number number = {uint32: value};
+    Number number = {.uint32 = value};
     if(is_big_endian()) {
         buf_write_bytes_reverse(buffer, number.int32_bytes, sizeof(uint32_t));
     } else {
@@ -224,7 +224,7 @@ uint32_t buf_read_uint32_le(Buffer buffer) {
 }
 
 void buf_write_uint64_be(Buffer buffer, uint64_t value) {
-    Number number = {uint64: value};
+    Number number = {.uint64 = value};
     if(is_big_endian()) {
         buf_write_bytes(buffer, number.int64_bytes, sizeof(uint64_t));
     } else {
@@ -243,7 +243,7 @@ uint64_t buf_read_uint64_be(Buffer buffer) {
 }
 
 void buf_write_uint64_le(Buffer buffer, uint64_t value) {
-    Number number = {uint64: value};
+    Number number = {.uint64 = value};
     if(is_big_endian()) {
         buf_write_bytes_reverse(buffer, number.int64_bytes, sizeof(uint64_t));
     } else {
@@ -261,7 +261,7 @@ uint64_t buf_read_uint64_le(Buffer buffer) {
 }
 
 void buf_write_float_be(Buffer buffer, float value) {
-    Number number = {floatN: value};
+    Number number = {.floatN = value};
     if(is_big_endian()) {
         buf_write_bytes(buffer, number.floatN_bytes, sizeof(float));
     } else {
@@ -280,7 +280,7 @@ float buf_read_float_be(Buffer buffer) {
 }
 
 void buf_write_float_le(Buffer buffer, float value) {
-    Number number = {floatN: value};
+    Number number = {.floatN = value};
     if(is_big_endian()) {
         buf_write_bytes_reverse(buffer, number.floatN_bytes, sizeof(float));
     } else {
@@ -299,7 +299,7 @@ float buf_read_float_le(Buffer buffer) {
 }
 
 void buf_write_double_be(Buffer buffer, double value) {
-    Number number = {doubleN: value};
+    Number number = {.doubleN = value};
     if(is_big_endian()) {
         buf_write_bytes(buffer, number.doubleN_bytes, sizeof(double));
     } else {
@@ -318,7 +318,7 @@ double buf_read_double_be(Buffer buffer) {
 }
 
 void buf_write_double_le(Buffer buffer, double value) {
-    Number number = {doubleN: value};
+    Number number = {.doubleN = value};
     if(is_big_endian()) {
         buf_write_bytes_reverse(buffer, number.doubleN_bytes, sizeof(double));
     } else {
