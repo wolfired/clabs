@@ -20,6 +20,8 @@ void matrix_raw_scale_to(float factor, float* dst, const float* src, int32_t row
 void matrix_raw_transpose(float* dst, int32_t row, int32_t col);
 void matrix_raw_transpose_to(float* dst, const float* src, int32_t row, int32_t col);
 
+void matrix_create(MatrixPtr* hold, int32_t row, int32_t col);
+void matrix_destory(MatrixPtr* hold);
 void matrix_print(MatrixPtr dst);
 void matrix_init(float value, MatrixPtr dst);
 void matrix_add(MatrixPtr left, MatrixPtr right);

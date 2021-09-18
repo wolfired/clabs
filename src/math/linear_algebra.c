@@ -24,7 +24,7 @@ void matrix_raw_init(float value, float* dst, int32_t row, int32_t col) {
     for(int32_t i = 0; i < row * col; ++i) { dst[i] = value; }
 }
 
-inline void matrix_raw_add(float* left, const float* right, int32_t row, int32_t col) {
+void matrix_raw_add(float* left, const float* right, int32_t row, int32_t col) {
     matrix_raw_add_to(left, left, right, row, col);
 }
 
@@ -35,7 +35,7 @@ void matrix_raw_add_to(float* dst, const float* left, const float* right, int32_
     for(int32_t i = 0; i < row * col; ++i) { dst[i] = left[i] + right[i]; }
 }
 
-inline void matrix_raw_sub(float* left, const float* right, int32_t row, int32_t col) {
+void matrix_raw_sub(float* left, const float* right, int32_t row, int32_t col) {
     matrix_raw_sub_to(left, left, right, row, col);
 }
 
@@ -68,7 +68,7 @@ void matrix_raw_mul_to(float* dst, const float* left, int32_t left_row, int32_t 
     }
 }
 
-inline void matrix_raw_scale(float factor, float* dst, int32_t row, int32_t col) {
+void matrix_raw_scale(float factor, float* dst, int32_t row, int32_t col) {
     matrix_raw_scale_to(factor, dst, dst, row, col);
 }
 
@@ -97,26 +97,44 @@ void matrix_raw_transpose_to(float* dst, const float* src, int32_t row, int32_t 
     }
 }
 
-inline void matrix_print(MatrixPtr dst) {
+void matrix_create(MatrixPtr* hold, int32_t row, int32_t col) {
+    assert(NULL == *hold);
+
+    *hold        = malloc(sizeof(**hold) * row * col * sizeof(float));
+    (*hold)->row = row;
+    (*hold)->col = col;
+
+    matrix_init(0, *hold);
+}
+
+void matrix_destory(MatrixPtr* hold) {
+    assert(NULL != *hold);
+
+    free(*hold);
+
+    *hold = NULL;
+}
+
+void matrix_print(MatrixPtr dst) {
     matrix_raw_print(dst->raw, dst->row, dst->col);
 }
 
-inline void matrix_init(float value, MatrixPtr dst) {
+void matrix_init(float value, MatrixPtr dst) {
     matrix_raw_init(value, dst->raw, dst->row, dst->col);
 }
 
-inline void matrix_add(MatrixPtr left, MatrixPtr right) {
+void matrix_add(MatrixPtr left, MatrixPtr right) {
     matrix_raw_add(left->raw, right->raw, left->row, left->col);
 }
 
-inline void matrix_add_to(MatrixPtr dst, MatrixPtr left, MatrixPtr right) {
+void matrix_add_to(MatrixPtr dst, MatrixPtr left, MatrixPtr right) {
     matrix_raw_add_to(dst->raw, left->raw, right->raw, left->row, left->col);
 }
 
-inline void matrix_sub(MatrixPtr left, MatrixPtr right) {
+void matrix_sub(MatrixPtr left, MatrixPtr right) {
     matrix_raw_sub(left->raw, right->raw, left->row, left->col);
 }
 
-inline void matrix_sub_to(MatrixPtr dst, MatrixPtr left, MatrixPtr right) {
+void matrix_sub_to(MatrixPtr dst, MatrixPtr left, MatrixPtr right) {
     matrix_raw_sub_to(dst->raw, left->raw, right->raw, left->row, left->col);
 }
