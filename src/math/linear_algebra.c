@@ -100,7 +100,7 @@ void matrix_raw_transpose_to(float* dst, const float* src, int32_t row, int32_t 
 void matrix_create(MatrixPtr* hold, int32_t row, int32_t col) {
     assert(NULL == *hold);
 
-    *hold        = malloc(sizeof(**hold) * row * col * sizeof(float));
+    *hold        = malloc(sizeof(**hold) + row * col * sizeof(float));
     (*hold)->row = row;
     (*hold)->col = col;
 
